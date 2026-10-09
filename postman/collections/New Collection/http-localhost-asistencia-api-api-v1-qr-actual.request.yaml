@@ -1,0 +1,19 @@
+$kind: http-request
+name: http://localhost/asistencia-api/api/v1/qr/actual
+description: ""
+url: http://localhost/asistencia-api/api/v1/qr/actual
+method: GET
+headers:
+  x-api-key: 0c74c3aa1c1e18c2e5fae3c6b7669f543019457d31f6e70f5906d8fea10aad7a
+body:
+  type: json
+  content: "{\r
+
+    \  \"username\": \"admin\",\r
+
+    \  \"password\": \"admin123\",\r
+
+    \  \"dispositivo\": \"Postman Test\"\r
+
+    }"
+order: 1000

@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{base_url}}/api/v1/asistencia/marcar"
+method: POST
+headers:
+  Authorization: Bearer {{token_docente}}
+body:
+  type: json
+  content: '{ "qr_token":
+    "aaaa0000000000000000000000000000000000000000000000000000000000aaaa" }'
+order: 4000

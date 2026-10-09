@@ -1,0 +1,41 @@
+$kind: http-request
+description: ""
+url: "{{base_url}}/api/v1/auth/login"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"username\": \"jperez\",\r
+
+    \  \"password\": \"docente123\",\r
+
+    \  \"dispositivo\": \"Postman\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const r = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Rol es docente\", () =>
+      pm.expect(r.data.usuario.rol).to.eql(\"docente\"));\r
+
+      pm.test(\"Tiene docente_id numérico\", () =>
+      pm.expect(r.data.usuario.docente_id).to.be.a('number'));\r
+
+      \r
+
+      if (r.success && r.data?.token) {\r
+
+      \    pm.environment.set(\"token_docente\", r.data.token);\r
+
+      \    console.log(\"✅ token_docente guardado, docente_id =\",
+      r.data.usuario.docente_id);\r
+
+      }"
+    language: text/javascript
+order: 9000

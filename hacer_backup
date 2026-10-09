@@ -1,0 +1,20 @@
+# Crear carpeta de backup con la fecha
+$fecha = Get-Date -Format "yyyy-MM-dd"
+$backup = "D:\BACKUP_Asistencia_$fecha"
+
+New-Item -ItemType Directory -Path $backup -Force
+
+# Copiar el backend
+Copy-Item -Path "C:\wamp64\www\asistencia-api" -Destination "$backup\asistencia-api" -Recurse -Force
+
+# Copiar el proyecto Android (NO copiamos 'build' ni '.gradle' para ahorrar espacio)
+robocopy "C:\AsistenciaDocentes" "$backup\AsistenciaDocentes" /E /XD build .gradle .idea /XF *.iml
+
+Write-Host "✅ Backup en: $backup"
+
+
+
+
+--Base de  datos--
+
+& "C:\wamp64\bin\mysql\mysql9.1.0\bin\mysqldump.exe" -u root control_asistencia_docentes | Out-File -Encoding UTF8 "D:\BACKUP_Asistencia_2026-10-09\control_asistencia_docentes.sql"

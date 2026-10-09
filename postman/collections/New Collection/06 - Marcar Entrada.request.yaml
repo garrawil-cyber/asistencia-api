@@ -1,0 +1,48 @@
+$kind: http-request
+description: ""
+url: "{{base_url}}/api/v1/asistencia/marcar"
+method: POST
+headers:
+  Authorization: Bearer {{token_docente}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"qr_token\": \"{{qr_token}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const r = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Es entrada\", () =>
+      pm.expect(r.data.tipo).to.eql(\"entrada\"));\r
+
+      pm.test(\"Estado válido\", () => pm.expect([\"presente\",
+      \"tarde\"]).to.include(r.data.estado));\r
+
+      pm.test(\"Tiene asistencia_id\", () =>
+      pm.expect(r.data.asistencia_id).to.be.a('number'));\r
+
+      \r
+
+      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━━━━\");\r
+
+      console.log(\"📋 MARCADO:\", r.data.tipo.toUpperCase());\r
+
+      console.log(\"   Hora:            \", r.data.hora);\r
+
+      console.log(\"   Estado:          \", r.data.estado);\r
+
+      console.log(\"   Minutos tardanza:\", r.data.minutos_tardanza);\r
+
+      console.log(\"   Mensaje:         \", r.data.mensaje);\r
+
+      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━━━━\");"
+    language: text/javascript
+order: 6000

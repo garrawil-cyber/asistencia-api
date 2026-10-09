@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{base_url}}/api/v1/qr/actual"
+method: GET
+body:
+  type: json
+  content: '{"qr_token":"cualquier-cosa"}'
+order: 5000

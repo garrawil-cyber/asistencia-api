@@ -1,0 +1,57 @@
+$kind: http-request
+description: ""
+url: "{{base_url}}/api/v1/qr/imagen?token={{qr_token}}"
+method: GET
+headers:
+  "": ""
+queryParams:
+  token: "{{qr_token}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"username\": \"jperez\",\r
+
+    \  \"password\": \"docente123\",\r
+
+    \  \"dispositivo\": \"Postman\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const r = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Token es hex de 64 chars\", () => {\r
+
+      \    pm.expect(r.data.token).to.be.a('string');\r
+
+      \    pm.expect(r.data.token).to.match(/^[a-f0-9]{64}$/);\r
+
+      });\r
+
+      pm.test(\"Tiene imagen_url\", () =>
+      pm.expect(r.data.imagen_url).to.include('/api/v1/qr/imagen'));\r
+
+      pm.test(\"Tiene segundos\", () =>
+      pm.expect(r.data.segundos).to.be.a('number').and.above(0));\r
+
+      \r
+
+      if (r.success && r.data?.token) {\r
+
+      \    pm.environment.set(\"qr_token\", r.data.token);\r
+
+      \    console.log(\"✅ qr_token guardado:\", r.data.token.substring(0, 16) +
+      \"...\");\r
+
+      \    console.log(\"   expira en\", r.data.segundos, \"segundos\");\r
+
+      \    console.log(\"   nuevo:\", r.data.nuevo);\r
+
+      }"
+    language: text/javascript
+order: 7000

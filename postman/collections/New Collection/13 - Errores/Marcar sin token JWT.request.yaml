@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{base_url}}/api/v1/asistencia/marcar"
+method: POST
+body:
+  type: json
+  content: '{"qr_token":"cualquier-cosa"}'
+order: 3000

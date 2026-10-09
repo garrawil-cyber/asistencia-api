@@ -1,0 +1,14 @@
+{
+    "name": "colegio/asistencia-api",
+    "description": "API de control de asistencia docente",
+    "require": {
+        "php": ">=8.0",
+        "endroid/qr-code": "^5.0",
+        "dompdf/dompdf": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}

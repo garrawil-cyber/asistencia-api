@@ -1,0 +1,46 @@
+$kind: http-request
+description: ""
+url: "{{base_url}}/api/v1/asistencia/hoy"
+method: GET
+headers:
+  Authorization: Bearer {{token_docente}}
+body:
+  type: json
+  content: "{\r
+
+    \  \"qr_token\": \"{{qr_token}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const r = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Tiene hora_entrada\", () =>
+      pm.expect(r.data.hora_entrada).to.be.a('string'));\r
+
+      pm.test(\"Tiene hora_salida\", () =>
+      pm.expect(r.data.hora_salida).to.be.a('string'));\r
+
+      \r
+
+      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━\");\r
+
+      console.log(\"📅 Fecha:        \", r.data.fecha);\r
+
+      console.log(\"⬇️  Entrada:      \", r.data.hora_entrada);\r
+
+      console.log(\"⬆️  Salida:       \", r.data.hora_salida);\r
+
+      console.log(\"⏰ Tardanza:     \", r.data.minutos_tardanza, \"min\");\r
+
+      console.log(\"📌 Estado:       \", r.data.estado);\r
+
+      console.log(\"📝 Método:       \", r.data.metodo_marcacion);\r
+
+      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━\");"
+    language: text/javascript
+order: 5000

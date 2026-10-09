@@ -1,0 +1,42 @@
+$kind: http-request
+description: ""
+url: "{{base_url}}/api/v1/auth/login"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"username\": \"admin\",\r
+
+    \  \"password\": \"admin123\",\r
+
+    \  \"dispositivo\": \"Postman\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const r = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Devuelve token\", () => {\r
+
+      \    pm.expect(r.success).to.be.true;\r
+
+      \    pm.expect(r.data.token).to.be.a('string').and.not.empty;\r
+
+      });\r
+
+      \r
+
+      if (r.success && r.data?.token) {\r
+
+      \    pm.environment.set(\"token_admin\", r.data.token);\r
+
+      \    console.log(\"✅ token_admin guardado\");\r
+
+      }"
+    language: text/javascript
+order: 10000

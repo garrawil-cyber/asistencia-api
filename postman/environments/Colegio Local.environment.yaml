@@ -1,0 +1,12 @@
+name: Colegio Local
+values:
+  - key: base_url
+    value: ''
+  - key: api_key
+    value: ''
+  - key: token_admin
+    value: ''
+  - key: token_docente
+    value: ''
+  - key: qr_token
+    value: ''

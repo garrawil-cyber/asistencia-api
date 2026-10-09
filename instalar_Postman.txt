@@ -1,0 +1,24 @@
+📥 Paso 0: Instalar Postman
+Ve a https://www.postman.com/downloads/
+
+Descarga la versión para Windows
+
+Instala y crea una cuenta gratuita (o sáltalo con "Skip and continue")
+
+También sirve la versión web, pero la de escritorio es más cómoda.
+
+
+VER EL QR:
+
+http://localhost/asistencia-api/api/v1/qr/imagen?token=0c74c3aa1c1e18c2e5fae3c6b7669f543019457d31f6e70f5906d8fea10aad7a
+
+CLAVES EDE USUARIO:
+PS C:\wamp64\www\asistencia-api> php scripts/fix_passwords.php
+Could not open input file: scripts/fix_passwords.php
+PS C:\wamp64\www\asistencia-api> php scripts/fix_passwords.php
+✅ admin → password actualizado a 'admin123'
+✅ coordinador → password actualizado a 'coord123'
+✅ jperez → password actualizado a 'docente123'
+
+🎉 Listo. Ahora prueba el login en Postman.
+PS C:\wamp64\www\asistencia-api> 

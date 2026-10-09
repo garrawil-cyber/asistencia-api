@@ -1,0 +1,48 @@
+$kind: http-request
+description: ""
+url: "{{base_url}}/api/v1/asistencia/historial?desde=2026-10-01"
+method: GET
+headers:
+  Authorization: Bearer {{token_docente}}
+queryParams:
+  - key: desde
+    value: 2026-10-01
+    disabled: false
+    description: ""
+body:
+  type: json
+  content: "{\r
+
+    \  \"qr_token\": \"{{qr_token}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const r = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+
+      pm.test(\"Es array\", () => pm.expect(r.data).to.be.an('array'));\r
+
+      pm.test(\"Tiene al menos 1 registro\", () =>
+      pm.expect(r.data.length).to.be.above(0));\r
+
+      \r
+
+      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━━━━\");\r
+
+      console.log(\"📅 Registros encontrados:\", r.data.length);\r
+
+      r.data.forEach((a, i) => {\r
+
+      \    console.log(`   [${i + 1}] ${a.fecha} | ${a.estado.padEnd(10)} | ⬇️
+      ${a.hora_entrada?.substring(11) ?? '--:--'} | ⬆️
+      ${a.hora_salida?.substring(11) ?? '--:--'}`);\r
+
+      });\r
+
+      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━━━━\");"
+    language: text/javascript
+order: 4000
