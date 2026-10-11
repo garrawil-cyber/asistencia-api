@@ -12,3 +12,7 @@ Clave_GitHub_*.txt
 # Uploads de usuarios (no versionar)
 public/uploads/justificaciones/*
 !public/uploads/justificaciones/.gitkeep
+
+# Uploads de usuarios (no versionar)
+public/uploads/justificaciones/*
+!public/uploads/justificaciones/.gitkeep
