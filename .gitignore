@@ -1,2 +1,5 @@
 public/uploads/justificaciones/*
 !public/uploads/justificaciones/.gitkeep
+Clave_GitHub_*.txt
+*.token
+*.secret
