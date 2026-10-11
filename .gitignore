@@ -3,3 +3,12 @@ public/uploads/justificaciones/*
 Clave_GitHub_*.txt
 *.token
 *.secret
+
+# Archivos sensibles
+Clave_GitHub_*.txt
+*.token
+*.secret
+
+# Uploads de usuarios (no versionar)
+public/uploads/justificaciones/*
+!public/uploads/justificaciones/.gitkeep
