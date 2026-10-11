@@ -226,6 +226,58 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+    // ========================================
+    // Menú hamburguesa (móvil)
+    // ========================================
+    const btnHamburger = document.getElementById('btnHamburger');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function abrirMenu() {
+        if (sidebar) sidebar.classList.add('sidebar-abierto');
+        if (overlay) overlay.classList.add('activo');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarMenu() {
+        if (sidebar) sidebar.classList.remove('sidebar-abierto');
+        if (overlay) overlay.classList.remove('activo');
+        document.body.style.overflow = '';
+    }
+
+    if (btnHamburger) {
+        btnHamburger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Hamburguesa clickeada');  // Debug
+
+            if (sidebar && sidebar.classList.contains('sidebar-abierto')) {
+                cerrarMenu();
+            } else {
+                abrirMenu();
+            }
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', cerrarMenu);
+    }
+
+    // Cerrar al tocar un link del sidebar
+    document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .nav-item').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                cerrarMenu();
+            }
+        });
+    });
+
+    // Cerrar al redimensionar a desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            cerrarMenu();
+        }
+    });
 
 });  //cierre del DOMContentLoaded
 

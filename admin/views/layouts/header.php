@@ -5,6 +5,10 @@ $usuario = Session::get('username', 'Invitado');
 $rol     = Session::get('rol', '');
 $titulo  = $titulo ?? 'Panel Admin';
 $paginaActiva = $paginaActiva ?? 'dashboard';
+
+// Cache busting: devuelve la fecha de modificación del archivo (o time() si no se encuentra)
+// para que el navegador móvil siempre descargue la última versión de CSS/JS.
+$assetV = fn(string $rel) => @filemtime($_SERVER['DOCUMENT_ROOT'] . $rel) ?: time();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,20 +19,20 @@ $paginaActiva = $paginaActiva ?? 'dashboard';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="/asistencia-api/admin/assets/css/admin.css" rel="stylesheet">
+    <link href="/asistencia-api/admin/assets/css/admin.css?v=<?= $assetV('/asistencia-api/admin/assets/css/admin.css') ?>" rel="stylesheet">
     <!-- Toastify para notificaciones -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    
+
 </head>
 <body>
 
 <div class="app-layout">
 
     <!-- ============ SIDEBAR ============ -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <i class="bi bi-mortarboard-fill"></i>
             <div>
@@ -82,27 +86,33 @@ $paginaActiva = $paginaActiva ?? 'dashboard';
     <!-- ============ CONTENIDO ============ -->
     <div class="main-wrapper">
 
-        <!-- Topbar -->
-        <header class="topbar">
-            <div class="topbar-left">
-                <h1 class="page-title"><?= htmlspecialchars($titulo) ?></h1>
-<div class="page-date">
-    <i class="bi bi-calendar3"></i>
-    <?= \App\Core\DateHelper::fechaLarga(date('Y-m-d')) ?>
-</div>
+<!-- Topbar -->
+<header class="topbar">
+    <div class="topbar-left">
+        <button class="btn-hamburger" id="btnHamburger" type="button" aria-label="Abrir menú">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="topbar-title">
+            <h1 class="page-title"><?= htmlspecialchars($titulo) ?></h1>
+            <div class="page-date">
+                <i class="bi bi-calendar3"></i>
+                <?= \App\Core\DateHelper::fechaLarga(date('Y-m-d')) ?>
             </div>
-            <div class="topbar-right">
-                <div class="user-badge">
-                    <div class="user-avatar">
-                        <?= strtoupper(substr($usuario, 0, 1)) ?>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name"><?= htmlspecialchars($usuario) ?></div>
-                        <div class="user-role"><?= htmlspecialchars($rol) ?></div>
-                    </div>
-                </div>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <div class="user-badge">
+            <div class="user-avatar">
+                <?= strtoupper(substr($usuario, 0, 1)) ?>
             </div>
-        </header>
+            <div class="user-info">
+                <div class="user-name"><?= htmlspecialchars($usuario) ?></div>
+                <div class="user-role"><?= htmlspecialchars($rol) ?></div>
+            </div>
+        </div>
+    </div>
+</header>
+
 
         <!-- Contenido de la página -->
         <main class="main-content">
