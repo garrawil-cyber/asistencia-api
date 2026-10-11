@@ -1,0 +1,58 @@
+C:\wamp64\www\asistencia-api\
+│
+├── app/                          ← COMPARTIDO
+│   ├── Core/
+│   │   ├── Router.php
+│   │   ├── Database.php
+│   │   ├── Request.php
+│   │   ├── Response.php
+│   │   ├── JWT.php
+│   │   └── Session.php          ← NUEVO (para el panel)
+│   ├── Models/                   ← COMPARTIDO
+│   │   ├── Usuario.php
+│   │   ├── Docente.php
+│   │   ├── Asistencia.php
+│   │   ├── QrToken.php
+│   │   └── ...
+│   ├── Controllers/              ← Controllers de la API
+│   │   ├── AuthController.php
+│   │   ├── AsistenciaController.php
+│   │   └── QrController.php
+│   ├── Middleware/
+│   │   ├── AuthMiddleware.php   ← Para API (JWT)
+│   │   └── SessionMiddleware.php ← NUEVO para admin
+│   └── Admin/                    ← NUEVO
+│       ├── Controllers/
+│       │   ├── AuthController.php
+│       │   ├── DashboardController.php
+│       │   ├── DocenteController.php
+│       │   └── ReporteController.php
+│       └── Middleware/
+│           └── RequireAdmin.php
+│
+├── admin/                        ← NUEVO (vistas y assets del panel)
+│   ├── index.php                 ← Front controller del panel
+│   ├── .htaccess
+│   ├── views/
+│   │   ├── layouts/
+│   │   ├── auth/
+│   │   ├── dashboard/
+│   │   └── docentes/
+│   └── assets/
+│       ├── css/
+│       ├── js/
+│       └── img/
+│
+├── public/                       ← API (ya existe)
+│   ├── index.php
+│   └── .htaccess
+│
+├── kiosko/                       ← Kiosko (ya existe)
+│   └── index.html
+│
+├── config/
+│   └── config.php                ← COMPARTIDO
+│
+├── vendor/                       ← Composer (compartido)
+├── scripts/
+└── .htaccess                     ← Rewrite global

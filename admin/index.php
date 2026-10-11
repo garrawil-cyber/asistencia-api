@@ -20,6 +20,7 @@ use App\Admin\Controllers\ReporteController;
 
 use App\Admin\Controllers\PerfilController;
 use App\Admin\Controllers\LogController;
+use App\Admin\Controllers\JustificacionController;
 
 $router = new Router();
 
@@ -51,6 +52,13 @@ $router->post('/admin/perfil/cambiar-password',  fn() => (new PerfilController()
 
 // Logs de actividad
 $router->get ('/admin/logs', fn() => (new LogController())->index());
+
+// Justificaciones
+$router->get ('/admin/justificaciones',              fn() => (new JustificacionController())->index());
+$router->get ('/admin/justificaciones/crear',        fn() => (new JustificacionController())->mostrarCrear());
+$router->post('/admin/justificaciones/crear',        fn() => (new JustificacionController())->crear());
+$router->get ('/admin/justificaciones/ver/{id}',     fn($id) => (new JustificacionController())->ver($id));
+$router->post('/admin/justificaciones/responder/{id}', fn($id) => (new JustificacionController())->responder($id));
 
 // -------- Dispatch --------
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

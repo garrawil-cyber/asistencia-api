@@ -141,6 +141,16 @@ G
 | GET | `/api/v1/asistencia/hoy` | JWT docente | Estado de hoy |
 | GET | `/api/v1/asistencia/historial` | JWT | Historial (filtrable) |
 
+### Justificaciones (Panel Admin)
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/admin/justificaciones` | Lista con filtros |
+| GET | `/admin/justificaciones/crear` | Formulario nueva |
+| POST | `/admin/justificaciones/crear` | Guardar |
+| GET | `/admin/justificaciones/ver/{id}` | Ver detalle |
+| POST | `/admin/justificaciones/responder/{id}` | Aprobar o rechazar |
+
 ### QR dinámico
 
 | Método | Endpoint | Auth | Descripción |
@@ -177,6 +187,7 @@ G
 - ✅ Mi Perfil + cambio de contraseña con barra de fortaleza
 - ✅ Logs de actividad (auditoría completa)
 - ✅ Toast de notificaciones (Toastify)
+- ✅ Módulo de Justificaciones (crear, ver detalle, aprobar, rechazar)
 
 ### Kiosko
 - ✅ QR dinámico rotando cada 60 segundos
@@ -384,29 +395,21 @@ Usuario: jperez
 Contraseña: docente123
 
 📱 Funcionalidades
-Implementadas ✅
-Login con JWT
+### Implementadas ✅
+- Login con JWT
+- Persistencia de sesión (DataStore)
+- Home con nombre del docente
+- Escáner QR con CameraX + ML Kit
+- Marcación de entrada/salida
+- Snackbar con feedback al usuario
+- Logout funcional
+- Manejo de errores con mensajes amigables
+- **Ver Historial de asistencias** con filtros de rango (Semana / Este mes / Mes anterior / Este año)
+- **Auto-login** con verificación de sesión (splash screen)
+- **Interceptor JWT automático** (el token se agrega desde el SessionManager en cada petición)
 
-Persistencia de sesión (DataStore)
-
-Home con nombre del docente
-
-Escáner QR con CameraX + ML Kit
-
-Marcación de entrada/salida
-
-Snackbar con feedback al usuario
-
-Logout funcional
-
-Manejo de errores con mensajes amigables
-
-Pendientes ⏳
-Ver historial de asistencias
-
-Auto-login (si el token sigue vigente)
-
-Interceptor JWT automático
+### Pendientes ⏳
+- Modo offline
 
 Modo offline
 

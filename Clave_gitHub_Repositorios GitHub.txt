@@ -1,0 +1,41 @@
+wamp64-asistencia
+
+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
+
+
+Nombre: wamp64-asistencia
+Expira: Thu, Jan 7 2027
+Token: github_pat_11BZHVTPQ0YN83DNT3Fw3Wy_sTIdEqG7RbuccKE8iZhtNa5PgYN79Yzc1KkK74055nvKDEUQVP5iJwL
+
+
+Si tu PC se rompe mañana:
+
+Instalas Git en la nueva PC
+
+git clone https://github.com/garrawil-cyber/asistencia-api.git
+
+git clone https://github.com/garrawil-cyber/AsistenciaDocentes.git
+
+Importas el .sql a MySQL
+
+Todo funciona de nuevo. 🚀
+
+Repositorios GitHub
+🔒 github.com/garrawil-cyber/asistencia-api (privado)
+
+🔒 github.com/garrawil-cyber/AsistenciaDocentes (privado)
+
+2 — No olvides las credenciales
+Guarda en un lugar seguro (Bitwarden, 1Password, o un archivo protegido):
+
+text
+Panel Admin:     admin / admin123
+                 coordinador / coord123
+
+Docentes:        jperez / docente123
+                 mlopez / docente123
+
+GitHub:          usuario: garrawil-cyber
+                 token: (el que generaste, no lo compartas)
+
+Backup SQL:      D:\BACKUP_Asistencia_2026-10-09\control_asistencia_docentes.sql

@@ -48,26 +48,27 @@ $paginaActiva = $paginaActiva ?? 'dashboard';
                 <i class="bi bi-people"></i>
                 <span>Docentes</span>
             </a>
-            <a href="/asistencia-api/admin/reportes"
-               class="nav-item <?= $paginaActiva === 'reportes' ? 'active' : '' ?>">
-                <i class="bi bi-graph-up"></i>
-                <span>Reportes</span>
-            </a>
             <a href="/asistencia-api/admin/justificaciones"
                class="nav-item <?= $paginaActiva === 'justificaciones' ? 'active' : '' ?>">
                 <i class="bi bi-file-earmark-text"></i>
                 <span>Justificaciones</span>
             </a>
+            <a href="/asistencia-api/admin/reportes"
+               class="nav-item <?= $paginaActiva === 'reportes' ? 'active' : '' ?>">
+                <i class="bi bi-graph-up"></i>
+                <span>Reportes</span>
+            </a>
             <a href="/asistencia-api/admin/perfil"
-   class="nav-item <?= $paginaActiva === 'perfil' ? 'active' : '' ?>">
-    <i class="bi bi-person-circle"></i>
-    <span>Mi Perfil</span>
-</a>
-<a href="/asistencia-api/admin/logs"
-   class="nav-item <?= $paginaActiva === 'logs' ? 'active' : '' ?>">
-    <i class="bi bi-journal-text"></i>
-    <span>Logs de Actividad</span>
-</a>
+                class="nav-item <?= $paginaActiva === 'perfil' ? 'active' : '' ?>">
+                <i class="bi bi-person-circle"></i>
+                <span>Mi Perfil</span>
+            </a>
+            <a href="/asistencia-api/admin/logs"
+                class="nav-item <?= $paginaActiva === 'logs' ? 'active' : '' ?>">
+                <i class="bi bi-journal-text"></i>
+                <span>Logs de Actividad</span>
+            </a>
+
         </nav>
 
         <div class="sidebar-footer">

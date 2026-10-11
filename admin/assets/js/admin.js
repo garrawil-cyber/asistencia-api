@@ -184,7 +184,50 @@ document.addEventListener('DOMContentLoaded', function() {
         inicializarValidaciones(formDocente);
     }
 
-});
+    // ========================================   ← AGREGAR AQUÍ
+    // SweetAlert: Aprobar/Rechazar justificación
+    // ========================================
+    document.querySelectorAll('[data-action="responder"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const accion = this.dataset.accion;
+            const nombre = this.dataset.nombre;
+            const esAprobar = accion === 'aprobado';
+
+            Swal.fire({
+                title: esAprobar ? '¿Aprobar justificación?' : '¿Rechazar justificación?',
+                html: esAprobar
+                    ? `La falta de <strong>${nombre}</strong> será marcada como <strong class="text-success">JUSTIFICADA</strong>.<br>
+                       <small class="text-muted">Esta acción modificará el estado de la asistencia.</small>`
+                    : `La justificación de <strong>${nombre}</strong> será <strong class="text-danger">RECHAZADA</strong>.<br>
+                       <small class="text-muted">La ausencia seguirá afectando su récord.</small>`,
+                icon: esAprobar ? 'success' : 'warning',
+                showCancelButton: true,
+                confirmButtonText: esAprobar ? 'Sí, aprobar' : 'Sí, rechazar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: esAprobar ? '#10b981' : '#ef4444',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/asistencia-api/admin/justificaciones/responder/${id}`;
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'accion';
+                    input.value = accion;
+
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
+
+});  //cierre del DOMContentLoaded
 
 
 // ============================================
@@ -478,4 +521,5 @@ function mostrarToast(mensaje, tipo = 'success', duracion = 4000) {
             y: 20
         }
     }).showToast();
+
 }
