@@ -90,5 +90,7 @@ $router->post('/api/v1/qr/generar', fn() => (new QrController())->generar());
 $router->get ('/api/v1/qr/actual',  fn() => (new QrController())->actual());
 $router->get ('/api/v1/qr/imagen',  fn() => (new QrController())->imagen());
 
+$router->get('/api/v1/asistencia/estado-hoy', fn() => (new AsistenciaController())->estadoHoy());
+
 // -------- Dispatch --------
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

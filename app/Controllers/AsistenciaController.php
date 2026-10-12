@@ -137,4 +137,20 @@ class AsistenciaController
         $data = Asistencia::buscarHoy($docenteId);
         Response::success($data, $data ? 'Asistencia de hoy' : 'Aún no has marcado hoy');
     }
+
+        /**
+     * GET /api/v1/asistencia/estado-hoy
+     * Devuelve el estado del día para el docente logueado.
+     */
+    public function estadoHoy(): void
+    {
+        $user      = AuthMiddleware::requireRol(['docente']);
+        $docenteId = (int)$user['docente_id'];
+
+        if (!$docenteId) Response::error('Usuario sin perfil de docente', 403);
+
+        $estado = Asistencia::estadoHoy($docenteId);
+        Response::success($estado, 'Estado de hoy');
+    }
+    
 }

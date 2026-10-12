@@ -255,4 +255,50 @@ class Asistencia
         return self::listarConFiltros($desde, $hasta, $docenteId, $estado, 10000, 0);
     }
 
+        /**
+     * Devuelve el estado del día del docente:
+     * - sin_marcar: no marcó entrada
+     * - entrada_marcada: marcó entrada pero no salida
+     * - completo: marcó entrada y salida
+     */
+    public static function estadoHoy(int $docenteId): array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("
+            SELECT
+                a.id,
+                a.fecha,
+                a.hora_entrada,
+                a.hora_salida,
+                a.minutos_tardanza,
+                e.codigo AS estado
+            FROM asistencias a
+            JOIN estados_asistencia e ON e.id = a.estado_id
+            WHERE a.docente_id = ? AND a.fecha = CURDATE()
+            LIMIT 1
+        ");
+        $stmt->execute([$docenteId]);
+        $asistencia = $stmt->fetch();
+
+        if (!$asistencia) {
+            return [
+                'estado' => 'sin_marcar',
+                'entrada' => null,
+                'salida' => null,
+                'minutos_tardanza' => 0,
+                'estado_asistencia' => null
+            ];
+        }
+
+        $estadoGeneral = $asistencia['hora_salida'] ? 'completo' : 'entrada_marcada';
+
+        return [
+            'estado' => $estadoGeneral,
+            'entrada' => $asistencia['hora_entrada'],
+            'salida' => $asistencia['hora_salida'],
+            'minutos_tardanza' => (int)$asistencia['minutos_tardanza'],
+            'estado_asistencia' => $asistencia['estado']
+        ];
+    }
+
 }

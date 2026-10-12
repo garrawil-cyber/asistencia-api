@@ -20,6 +20,7 @@ scripts:
 
       const r = pm.response.json();\r
 
-      pm.test(\"Mensaje correcto\", () => pm.expect(r.message).to.include(\"docente_id\"));"
+      pm.test(\"Mensaje correcto\", () =>
+      pm.expect(r.message).to.include(\"docente_id\"));"
     language: text/javascript
-order: 2001
+order: 3000
