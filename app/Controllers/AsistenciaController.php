@@ -7,6 +7,7 @@ use App\Core\Database;
 use App\Models\Asistencia;
 use App\Models\QrToken;
 use App\Middleware\AuthMiddleware;
+use App\Core\TurnoHelper;
 
 class AsistenciaController
 {
@@ -14,7 +15,7 @@ class AsistenciaController
      * POST /api/v1/asistencia/marcar
      * Docente escanea QR → registra entrada o salida según el estado del día.
      */
-    public function marcar(): void
+        public function marcar(): void
     {
         $user      = AuthMiddleware::requireRol(['docente']);
         $docenteId = (int)$user['docente_id'];
@@ -22,83 +23,97 @@ class AsistenciaController
         if (!$docenteId) Response::error('Usuario sin perfil de docente', 403);
 
         $qrToken = Request::input('qr_token');
-
         if (!$qrToken) Response::error('Token QR requerido', 422);
 
-        // 1) Validar QR (solo por vigencia temporal — NO se marca como usado)
+        // 1. Validar QR
         $qr = QrToken::validar($qrToken);
         if (!$qr) Response::error('QR inválido o expirado', 410);
 
-        // 2) ¿Ya marcó entrada hoy?
-        $asistenciaHoy = Asistencia::buscarHoy($docenteId);
-
-        if ($asistenciaHoy === null) {
-            // → ENTRADA
-            $resultado = $this->procesarEntrada($docenteId);
-        } elseif ($asistenciaHoy['hora_salida'] === null) {
-            // → SALIDA
-            Asistencia::registrarSalida($asistenciaHoy['id'], date('Y-m-d H:i:s'));
-            $resultado = [
-                'tipo'    => 'salida',
-                'hora'    => date('H:i:s'),
-                'mensaje' => 'Salida registrada correctamente'
-            ];
-        } else {
-            Response::error('Ya completaste tu marcación de hoy', 409);
+        // 2. Obtener el turno del docente
+        $turno = TurnoHelper::obtenerTurnoDocente($docenteId);
+        if (!$turno) {
+            Response::error('No tienes un turno asignado. Contacta al administrador.', 403);
         }
 
-        // FIX #2: NO marcar el QR como usado. Varios docentes pueden usar el
-        // mismo QR mientras esté vigente (60 seg por defecto).
-        // La única defensa es el UNIQUE(docente_id, fecha) en asistencias.
+        // 3. Buscar el estado del día
+        $asistenciaHoy = Asistencia::buscarHoy($docenteId);
+
+        // 4. Detectar qué acción corresponde
+        $detalle = TurnoHelper::detectarAccion($turno, $asistenciaHoy);
+
+        if (!empty($detalle['error'])) {
+            Response::error($detalle['error'], 409);
+        }
+
+        // 5. Ejecutar la acción
+        $tz = new \DateTimeZone('America/Lima');
+        $ahora = new \DateTime('now', $tz);
+
+        if ($detalle['accion'] === 'entrada') {
+            $resultado = $this->procesarEntrada($docenteId, $turno, $ahora);
+        } else {
+            // SALIDA
+            $estadoSalida = TurnoHelper::calcularEstadoSalida($turno, $ahora);
+
+            Asistencia::registrarSalida(
+                $asistenciaHoy['id'],
+                $ahora->format('Y-m-d H:i:s'),
+                $estadoSalida
+            );
+
+            $mensajeSalida = match($estadoSalida) {
+                'salida_ok'         => 'Salida registrada correctamente',
+                'salida_anticipada' => 'Salida anticipada registrada',
+                'salida_tardia'     => 'Salida tardía registrada',
+                default             => 'Salida registrada'
+            };
+
+            $resultado = [
+                'tipo'          => 'salida',
+                'hora'          => $ahora->format('H:i:s'),
+                'estado_salida' => $estadoSalida,
+                'mensaje'       => $mensajeSalida
+            ];
+        }
 
         Response::success($resultado, 'Marcación exitosa');
     }
 
     /**
-     * Calcula estado (presente/tarde) y registra entrada.
+     * Calcula el estado y registra la ENTRADA.
      */
-    private function procesarEntrada(int $docenteId): array
-    {
-        $db  = Database::getConnection();
-        $cfg = $db->query("SELECT clave, valor FROM configuracion")
-                  ->fetchAll(\PDO::FETCH_KEY_PAIR);
+    private function procesarEntrada(
+        int $docenteId,
+        array $turno,
+        \DateTime $ahora
+    ): array {
+        // Calcular estado (presente o tarde)
+        $calc = TurnoHelper::calcularEstadoEntrada($turno, $ahora);
 
-        $horaOficial = $cfg['hora_entrada_oficial'] ?? '07:30:00';
-        $tolerancia  = (int)($cfg['tolerancia_minutos'] ?? 5);
-
-        // FIX #3: usar zona horaria explícita
-        $tz    = new \DateTimeZone('America/Lima');
-        $ahora = new \DateTime('now', $tz);
-        $limite = (new \DateTime($horaOficial, $tz))->modify("+{$tolerancia} minutes");
-
-        if ($ahora <= $limite) {
-            $estado  = 'presente';
-            $minutos = 0;
-        } else {
-            $estado  = 'tarde';
-            $minutos = (int)(($ahora->getTimestamp() - (new \DateTime($horaOficial, $tz))->getTimestamp()) / 60);
-        }
-
+        // Registrar
         $id = Asistencia::registrarEntrada(
             $docenteId,
+            (int)$turno['id'],
+            'entrada',
             $ahora->format('Y-m-d H:i:s'),
-            $estado,
-            $minutos
+            $calc['estado'],
+            $calc['minutos']
         );
 
         return [
             'tipo'             => 'entrada',
             'asistencia_id'    => $id,
             'hora'             => $ahora->format('H:i:s'),
-            'estado'           => $estado,
-            'minutos_tardanza' => $minutos,
-            'mensaje'          => $estado === 'presente'
+            'estado'           => $calc['estado'],
+            'minutos_tardanza' => $calc['minutos'],
+            'turno'            => $turno['codigo'],
+            'mensaje'          => $calc['estado'] === 'presente'
                 ? '¡Bienvenido! Entrada registrada a tiempo'
-                : "Entrada registrada con {$minutos} min de tardanza"
+                : "Entrada registrada con {$calc['minutos']} min de tardanza"
         ];
     }
 
-    /**
+     /**
      * GET /api/v1/asistencia/historial
      * Docente: ve su propio historial.
      * Admin/coordinador: DEBE pasar ?docente_id=X
@@ -138,7 +153,7 @@ class AsistenciaController
         Response::success($data, $data ? 'Asistencia de hoy' : 'Aún no has marcado hoy');
     }
 
-        /**
+    /**
      * GET /api/v1/asistencia/estado-hoy
      * Devuelve el estado del día para el docente logueado.
      */
@@ -149,8 +164,48 @@ class AsistenciaController
 
         if (!$docenteId) Response::error('Usuario sin perfil de docente', 403);
 
-        $estado = Asistencia::estadoHoy($docenteId);
-        Response::success($estado, 'Estado de hoy');
+        // Obtener el turno del docente
+        $turno = TurnoHelper::obtenerTurnoDocente($docenteId);
+        if (!$turno) {
+            Response::success([
+                'estado' => 'sin_turno',
+                'turno'  => null,
+                'entrada' => null,
+                'salida'  => null,
+                'mensaje' => 'No tienes un turno asignado'
+            ], 'Estado de hoy');
+        }
+
+        // Buscar el estado de hoy
+        $asistenciaHoy = Asistencia::buscarHoy($docenteId);
+
+        if (!$asistenciaHoy) {
+            Response::success([
+                'estado'            => 'sin_marcar',
+                'turno'             => $turno['codigo'],
+                'turno_nombre'      => $turno['nombre'],
+                'hora_entrada'      => null,
+                'hora_salida'       => null,
+                'minutos_tardanza'  => 0,
+                'estado_asistencia' => null,
+                'estado_salida'     => null
+            ], 'Estado de hoy');
+        }
+
+        $estadoGeneral = $asistenciaHoy['hora_salida'] 
+            ? 'completo' 
+            : 'entrada_marcada';
+
+        Response::success([
+            'estado'            => $estadoGeneral,
+            'turno'             => $turno['codigo'],
+            'turno_nombre'      => $turno['nombre'],
+            'hora_entrada'      => $asistenciaHoy['hora_entrada'],
+            'hora_salida'       => $asistenciaHoy['hora_salida'],
+            'minutos_tardanza'  => (int)$asistenciaHoy['minutos_tardanza'],
+            'estado_asistencia' => $asistenciaHoy['estado'],
+            'estado_salida'     => $asistenciaHoy['estado_salida']
+        ], 'Estado de hoy');
     }
     
 }

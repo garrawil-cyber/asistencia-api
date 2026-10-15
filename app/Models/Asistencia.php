@@ -5,56 +5,63 @@ use App\Core\Database;
 
 class Asistencia
 {
-    /**
-     * Devuelve el registro de asistencia del docente para HOY.
-     * La fecha se calcula con la zona horaria del servidor MySQL.
+        /**
+     * Devuelve el registro del turno del docente para HOY.
+     * Con el sistema multi-turno, un docente solo tiene 1 turno asignado.
      */
     public static function buscarHoy(int $docenteId): ?array
     {
         $db = Database::getConnection();
         $stmt = $db->prepare("
-            SELECT a.id, a.docente_id, a.fecha, a.hora_entrada, a.hora_salida,
-                   a.minutos_tardanza, a.metodo_marcacion, a.observacion,
-                   e.codigo AS estado, e.descripcion AS estado_descripcion
+            SELECT a.id, a.docente_id, a.turno_id, a.bloque, a.fecha,
+                   a.hora_entrada, a.hora_salida, a.minutos_tardanza,
+                   a.metodo_marcacion, a.estado_salida, a.observacion,
+                   e.codigo AS estado,
+                   e.descripcion AS estado_descripcion
             FROM asistencias a
             JOIN estados_asistencia e ON e.id = a.estado_id
             WHERE a.docente_id = ? AND a.fecha = CURDATE()
+            ORDER BY a.id DESC
             LIMIT 1
         ");
         $stmt->execute([$docenteId]);
         return $stmt->fetch() ?: null;
     }
 
-    /**
+       /**
      * Registra la ENTRADA del día.
-     * La fecha se deriva de $horaEntrada (con zona horaria de PHP/Lima),
-     * no de CURDATE() de MySQL, para mantener consistencia.
-     *
-     * Lanza RuntimeException (código 409) si ya existe registro del día.
+     * Ahora incluye turno_id y bloque.
      */
     public static function registrarEntrada(
         int $docenteId,
+        int $turnoId,
+        string $bloque,
         string $horaEntrada,
         string $estado,
         int $minutos
     ): int {
         $db = Database::getConnection();
         $estadoId = self::idEstado($estado);
-
-        // Derivar la fecha del string de hora (formato 'YYYY-MM-DD HH:MM:SS')
         $fecha = substr($horaEntrada, 0, 10);
 
         try {
             $stmt = $db->prepare("
                 INSERT INTO asistencias
-                    (docente_id, fecha, hora_entrada, minutos_tardanza,
-                     estado_id, metodo_marcacion)
-                VALUES (?, ?, ?, ?, ?, 'qr')
+                    (docente_id, turno_id, bloque, fecha, hora_entrada,
+                     minutos_tardanza, estado_id, metodo_marcacion)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'qr')
             ");
-            $stmt->execute([$docenteId, $fecha, $horaEntrada, $minutos, $estadoId]);
+            $stmt->execute([
+                $docenteId,
+                $turnoId,
+                $bloque,
+                $fecha,
+                $horaEntrada,
+                $minutos,
+                $estadoId
+            ]);
             return (int)$db->lastInsertId();
         } catch (\PDOException $e) {
-            // Código SQLSTATE 23000 = violación de UNIQUE / FK
             if ($e->getCode() === '23000') {
                 throw new \RuntimeException('Ya registraste tu entrada hoy', 409);
             }
@@ -65,11 +72,18 @@ class Asistencia
     /**
      * Registra la SALIDA sobre un registro de asistencia existente.
      */
-    public static function registrarSalida(int $asistenciaId, string $horaSalida): void
-    {
+    public static function registrarSalida(
+        int $asistenciaId,
+        string $horaSalida,
+        string $estadoSalida
+    ): void {
         $db = Database::getConnection();
-        $db->prepare("UPDATE asistencias SET hora_salida = ? WHERE id = ?")
-           ->execute([$horaSalida, $asistenciaId]);
+        $stmt = $db->prepare("
+            UPDATE asistencias 
+            SET hora_salida = ?, estado_salida = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$horaSalida, $estadoSalida, $asistenciaId]);
     }
 
     /**
