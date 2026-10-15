@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 09-10-2026 a las 17:35:01
+-- Tiempo de generación: 15-10-2026 a las 13:09:50
 -- Versión del servidor: 9.1.0
 -- Versión de PHP: 8.3.14
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `asistencias` (
   UNIQUE KEY `uk_docente_fecha` (`docente_id`,`fecha`),
   KEY `estado_id` (`estado_id`),
   KEY `idx_fecha` (`fecha`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `asistencias`
@@ -103,7 +103,16 @@ CREATE TABLE IF NOT EXISTS `asistencias` (
 INSERT INTO `asistencias` (`id`, `docente_id`, `fecha`, `hora_entrada`, `hora_salida`, `minutos_tardanza`, `estado_id`, `metodo_marcacion`, `latitud`, `longitud`, `observacion`, `created_at`, `updated_at`) VALUES
 (2, 1, '2026-10-07', '2026-10-07 23:13:56', '2026-10-07 23:14:05', 943, 2, 'qr', NULL, NULL, NULL, '2026-10-08 04:13:56', '2026-10-08 04:14:05'),
 (4, 1, '2026-10-08', '2026-10-08 22:43:07', '2026-10-08 22:44:09', 913, 2, 'qr', NULL, NULL, NULL, '2026-10-09 03:43:07', '2026-10-09 03:44:09'),
-(5, 1, '2026-10-09', '2026-10-09 11:23:00', '2026-10-09 11:25:39', 233, 2, 'qr', NULL, NULL, NULL, '2026-10-09 16:23:00', '2026-10-09 16:25:39');
+(5, 1, '2026-10-09', '2026-10-09 11:23:00', '2026-10-09 11:25:39', 233, 4, 'qr', NULL, NULL, NULL, '2026-10-09 16:23:00', '2026-10-11 15:30:14'),
+(6, 1, '2026-10-10', '2026-10-10 22:15:00', '2026-10-10 23:48:52', 885, 2, 'qr', NULL, NULL, NULL, '2026-10-11 03:15:00', '2026-10-11 04:48:52'),
+(7, 1, '2026-10-11', '2026-10-11 01:11:08', '2026-10-11 01:11:21', 0, 1, 'qr', NULL, NULL, NULL, '2026-10-11 06:11:08', '2026-10-11 06:11:21'),
+(8, 5, '2026-10-11', '2026-10-11 13:12:57', '2026-10-11 14:05:16', 342, 2, 'qr', NULL, NULL, NULL, '2026-10-11 18:12:57', '2026-10-11 19:05:16'),
+(9, 5, '2026-10-12', '2026-10-12 15:14:21', '2026-10-12 17:16:43', 464, 2, 'qr', NULL, NULL, NULL, '2026-10-12 20:14:21', '2026-10-12 22:16:43'),
+(10, 1, '2026-10-12', '2026-10-12 15:15:17', '2026-10-12 16:18:40', 465, 2, 'qr', NULL, NULL, NULL, '2026-10-12 20:15:17', '2026-10-12 21:18:40'),
+(11, 6, '2026-10-12', '2026-10-12 17:25:06', '2026-10-12 17:26:34', 595, 2, 'qr', NULL, NULL, NULL, '2026-10-12 22:25:06', '2026-10-12 22:26:34'),
+(12, 5, '2026-10-13', '2026-10-13 12:31:49', '2026-10-13 13:06:39', 301, 2, 'qr', NULL, NULL, NULL, '2026-10-13 17:31:49', '2026-10-13 18:06:39'),
+(13, 6, '2026-10-13', '2026-10-13 13:01:50', '2026-10-13 13:02:52', 331, 2, 'qr', NULL, NULL, NULL, '2026-10-13 18:01:50', '2026-10-13 18:02:52'),
+(14, 7, '2026-10-13', '2026-10-13 13:13:19', '2026-10-13 13:13:39', 343, 2, 'qr', NULL, NULL, NULL, '2026-10-13 18:13:19', '2026-10-13 18:13:39');
 
 -- --------------------------------------------------------
 
@@ -176,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `docentes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `dni` (`dni`),
   UNIQUE KEY `usuario_id` (`usuario_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `docentes`
@@ -186,7 +195,10 @@ INSERT INTO `docentes` (`id`, `usuario_id`, `dni`, `nombres`, `apellidos`, `emai
 (1, 4, '12345678', 'Juan Carlos', 'Pérez Gómez', 'jperez@colegio.edu.pe', '987654321', 'Matemática', NULL, 1, '2026-10-07 20:08:15'),
 (2, 5, '87654321', 'María Teresa', 'López Torres', 'mlopez@colegio.edu.pe', '987111222', 'Lenguaje y Comunicación', NULL, 1, '2026-10-09 17:52:52'),
 (3, 6, '11223344', 'Carlos', 'Ramírez Torres', 'cramirez@colegio.edu.pe', '955111222', 'Historia del Perú', NULL, 1, '2026-10-09 18:08:04'),
-(4, 7, '54545445', 'Fernando', 'Santamaria Bances', 'fernando@gmail.com', '121212121', 'Lenguaje', NULL, 1, '2026-10-09 19:19:28');
+(4, 7, '54545445', 'Fernando', 'Santamaria Bances', 'fernando@gmail.com', '121212121', 'Lenguaje', NULL, 1, '2026-10-09 19:19:28'),
+(5, 8, '16631277', 'Wilmer', 'Garcia Ramirez', 'garrawil@gmail.com', '906962893', 'Analisis Orientado a Objetos', NULL, 1, '2026-10-11 18:12:09'),
+(6, 9, '14141414', 'Sixta', 'Cobenas Garcia', 'sixta@gmail.com', '1414141', 'Logico Matematico', NULL, 1, '2026-10-12 22:23:41'),
+(7, 10, '45142414', 'Ariana Kassandra', 'Regalado', 'ariana@gmail.com', '', 'Literatura', NULL, 1, '2026-10-13 18:12:10');
 
 -- --------------------------------------------------------
 
@@ -288,7 +300,14 @@ CREATE TABLE IF NOT EXISTS `justificaciones` (
   PRIMARY KEY (`id`),
   KEY `asistencia_id` (`asistencia_id`),
   KEY `aprobado_por` (`aprobado_por`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `justificaciones`
+--
+
+INSERT INTO `justificaciones` (`id`, `asistencia_id`, `motivo`, `archivo_url`, `aprobado_por`, `estado`, `fecha_solicitud`, `fecha_respuesta`) VALUES
+(2, 5, 'Certificado médico por enfermedad - Adjunto comprobante', '/uploads/justificaciones/just_6acba67c7d989.jpg', 1, 'aprobado', '2026-10-11 15:08:44', '2026-10-11 10:30:14');
 
 -- --------------------------------------------------------
 
@@ -306,7 +325,7 @@ CREATE TABLE IF NOT EXISTS `logs_actividad` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `usuario_id` (`usuario_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `logs_actividad`
@@ -346,7 +365,32 @@ INSERT INTO `logs_actividad` (`id`, `usuario_id`, `accion`, `detalle`, `ip`, `cr
 (31, 1, 'login', 'Inició sesión (prueba)', '192.168.0.19', '2026-10-09 20:53:19'),
 (32, 1, 'login', 'Inició sesión (prueba)', '192.168.0.19', '2026-10-09 20:53:19'),
 (33, 1, 'login', 'Inició sesión (prueba)', '192.168.0.19', '2026-10-09 20:53:19'),
-(34, 1, 'login', 'Inició sesión en el panel', '192.168.0.19', '2026-10-09 21:01:07');
+(34, 1, 'login', 'Inició sesión en el panel', '192.168.0.19', '2026-10-09 21:01:07'),
+(35, 1, 'login', 'Inició sesión en el panel', '::1', '2026-10-11 14:04:57'),
+(36, 1, 'login', 'Inició sesión en el panel', '192.168.0.3', '2026-10-11 14:05:17'),
+(37, 1, 'login', 'Inició sesión en el panel', '::1', '2026-10-11 14:41:27'),
+(38, 1, 'crear_justificacion', 'Creó justificación para asistencia #5', '::1', '2026-10-11 14:45:38'),
+(39, 1, 'crear_justificacion', 'Creó justificación para asistencia #5', '::1', '2026-10-11 15:08:44'),
+(40, 1, 'responder_justificacion', 'Aprobado justificación #2', '::1', '2026-10-11 15:30:14'),
+(41, 1, 'login', 'Inició sesión en el panel', '192.168.0.3', '2026-10-11 15:50:39'),
+(42, 1, 'logout', 'Cerró sesión', '::1', '2026-10-11 16:04:12'),
+(43, 1, 'login', 'Inició sesión en el panel', '::1', '2026-10-11 16:04:31'),
+(44, 1, 'login', 'Inició sesión en el panel', '192.168.0.3', '2026-10-11 16:19:08'),
+(45, 1, 'login', 'Inició sesión en el panel', '::1', '2026-10-11 17:03:10'),
+(46, 1, 'login', 'Inició sesión en el panel', '192.168.0.3', '2026-10-11 17:04:00'),
+(47, 1, 'login', 'Inició sesión en el panel', '::1', '2026-10-11 17:10:08'),
+(48, 1, 'login', 'Inició sesión en el panel', '192.168.0.3', '2026-10-11 17:12:00'),
+(49, 1, 'crear_docente', 'Creó al docente: Wilmer Garcia Ramirez', '::1', '2026-10-11 18:12:09'),
+(50, 1, 'logout', 'Cerró sesión', '::1', '2026-10-11 18:57:31'),
+(51, 1, 'login', 'Inició sesión en el panel', '192.168.0.19', '2026-10-12 22:18:21'),
+(52, 1, 'crear_docente', 'Creó al docente: Sixta Cobenas Garcia', '192.168.0.19', '2026-10-12 22:23:41'),
+(53, 1, 'logout', 'Cerró sesión', '192.168.0.19', '2026-10-12 22:27:49'),
+(54, 1, 'login', 'Inició sesión en el panel', '::1', '2026-10-13 18:07:52'),
+(55, 1, 'exportar', 'Exportó reporte del 2026-10-13 al 2026-10-13', '::1', '2026-10-13 18:09:07'),
+(56, 1, 'exportar', 'Exportó reporte del 2026-10-13 al 2026-10-13', '::1', '2026-10-13 18:09:37'),
+(57, 1, 'exportar', 'Exportó reporte del 2026-10-09 al 2026-10-13', '::1', '2026-10-13 18:10:01'),
+(58, 1, 'crear_docente', 'Creó al docente: Ariana Kassandra Regalado', '::1', '2026-10-13 18:12:10'),
+(59, 1, 'logout', 'Cerró sesión', '::1', '2026-10-13 18:31:15');
 
 -- --------------------------------------------------------
 
@@ -367,7 +411,7 @@ CREATE TABLE IF NOT EXISTS `qr_tokens` (
   UNIQUE KEY `token` (`token`),
   KEY `idx_expira` (`expira_en`),
   KEY `docente_id` (`docente_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `qr_tokens`
@@ -426,7 +470,68 @@ INSERT INTO `qr_tokens` (`id`, `token`, `generado_en`, `expira_en`, `usado`, `do
 (54, '89e3a2a70d624037cbd8f2204e06e23283d3c58ffc72a14c8245e0f5e3c77118', '2026-10-09 11:22:51', '2026-10-09 11:23:51', 0, NULL, '2026-10-09 16:22:51'),
 (55, 'b8bf1053bc923a0f52675ea10a6120469b390e340d8028dce2fd0af3a5c6e50f', '2026-10-09 11:23:51', '2026-10-09 11:24:51', 0, NULL, '2026-10-09 16:23:51'),
 (56, 'a2ad34b559ca9be2753bc60e83ccd065224f8561942a48d167ec3cff590b103a', '2026-10-09 11:25:36', '2026-10-09 11:26:36', 0, NULL, '2026-10-09 16:25:36'),
-(57, '2ccb7ad101390cbf1eb1272f249b34ee0e697132aa9a20a96603c80c6735a701', '2026-10-09 11:26:37', '2026-10-09 11:27:37', 0, NULL, '2026-10-09 16:26:37');
+(57, '2ccb7ad101390cbf1eb1272f249b34ee0e697132aa9a20a96603c80c6735a701', '2026-10-09 11:26:37', '2026-10-09 11:27:37', 0, NULL, '2026-10-09 16:26:37'),
+(58, '1b74b0501111ebce999882892d052d22379872a9a003c864c79f879a911c1e5e', '2026-10-09 17:44:33', '2026-10-09 17:45:33', 0, NULL, '2026-10-09 22:44:33'),
+(59, '66ffa312d80757c961615933f3eca46bf28a78aecdbf7b8b1ce2530fdf592ce6', '2026-10-09 17:45:33', '2026-10-09 17:46:33', 0, NULL, '2026-10-09 22:45:33'),
+(60, 'c7e2962a2d58ff3a3b067cab2a266096c1673f8321667359a2ff35902e980593', '2026-10-09 17:46:33', '2026-10-09 17:47:33', 0, NULL, '2026-10-09 22:46:33'),
+(61, '00dc0c1cee33553db0586d4d480f43d91f386a8a3d11aa7b988f0881cac14fc8', '2026-10-10 22:14:27', '2026-10-10 22:15:27', 0, NULL, '2026-10-11 03:14:27'),
+(62, 'c1fc7e814ed9480159180dcf13848fc97955240cf363b425e6d217736ab636d5', '2026-10-10 22:15:38', '2026-10-10 22:16:38', 0, NULL, '2026-10-11 03:15:38'),
+(63, '7070e6e2c51f37b768e8bd94343c56de877b5583f13f93de5a4c524f4a01cc78', '2026-10-10 22:49:25', '2026-10-10 22:50:25', 0, NULL, '2026-10-11 03:49:25'),
+(64, 'b0c9737be16f00a3f7acf687d65a256f407fe154087f11a638a4733fd8134d05', '2026-10-10 23:36:54', '2026-10-10 23:37:54', 0, NULL, '2026-10-11 04:36:54'),
+(65, '8e777ae8d3991d4a9dc2c2c1b759886b5d0ad67dc59e85e4d099d7280b2a1c4e', '2026-10-10 23:48:49', '2026-10-10 23:49:49', 0, NULL, '2026-10-11 04:48:49'),
+(66, 'b9652060ee852f61c7cf34929b8f1c82386a8daccac18d584a5d12e39b350ae1', '2026-10-10 23:50:06', '2026-10-10 23:51:06', 0, NULL, '2026-10-11 04:50:06'),
+(67, 'e769fd31dea424fb046d72151be65c1a0fb91cd47e25a619fd6a8d02a06df2f5', '2026-10-11 00:32:17', '2026-10-11 00:33:17', 0, NULL, '2026-10-11 05:32:17'),
+(68, 'a5e4284a67dbd207f9749f51f7efc08364379a6596e21da71502a0da98d5d1c5', '2026-10-11 00:50:01', '2026-10-11 00:51:01', 0, NULL, '2026-10-11 05:50:01'),
+(69, '55d3bec6775d1293aeea76710e6aea59319f64b3657e8c1f82d004aae2c93b70', '2026-10-11 01:10:43', '2026-10-11 01:11:43', 0, NULL, '2026-10-11 06:10:43'),
+(70, 'a155c660bcd458eb9becd896d70438967fbdf51c6854f26512172d0269d597dc', '2026-10-11 01:11:43', '2026-10-11 01:12:43', 0, NULL, '2026-10-11 06:11:43'),
+(71, '378d3013a400bb7b91d2b0a55f31a09e91d3e612c9b64fd8cfecd9e52bcf8c0c', '2026-10-11 01:12:43', '2026-10-11 01:13:43', 0, NULL, '2026-10-11 06:12:43'),
+(72, '16a5eae05d2fcc520d4d4a64b86eeb6018f82af76e5f8e9c80994b8f1c211c96', '2026-10-11 01:13:43', '2026-10-11 01:14:43', 0, NULL, '2026-10-11 06:13:43'),
+(73, '5534670f065ff45adefc552f9be1daa30e7bfa491f5bc7cf3772f9bd1c81ac53', '2026-10-11 13:00:23', '2026-10-11 13:01:23', 0, NULL, '2026-10-11 18:00:23'),
+(74, '1ca428d9aeecd936071b6f60137b0301b0a552834c3301c70ff2af2055127c48', '2026-10-11 13:01:23', '2026-10-11 13:02:23', 0, NULL, '2026-10-11 18:01:23'),
+(75, '9f23d8d8decfd873ed46aaa91d5bf901c95c405c68dbddb885b347d1369f465a', '2026-10-11 13:04:41', '2026-10-11 13:05:41', 0, NULL, '2026-10-11 18:04:41'),
+(76, '9ec986e10e31fc483eced3ede553291b55777f286196c09a35ca6a3e58ebff56', '2026-10-11 13:05:41', '2026-10-11 13:06:41', 0, NULL, '2026-10-11 18:05:41'),
+(77, '415fdc85e74368633d75065557220afbc02849aa94e1f3c36085d9c1236b2a30', '2026-10-11 13:06:41', '2026-10-11 13:07:41', 0, NULL, '2026-10-11 18:06:41'),
+(78, 'ba9004669a2d0ff86d62eb543fdc4436137d7875353c6572d0c6abf62835bc67', '2026-10-11 13:07:43', '2026-10-11 13:08:43', 0, NULL, '2026-10-11 18:07:43'),
+(79, 'c7f218ad433138487542fb8e2a434059db9c8b21c4e60b591c58d7e82538da4c', '2026-10-11 13:08:43', '2026-10-11 13:09:43', 0, NULL, '2026-10-11 18:08:43'),
+(80, '9ace95a177248670c3a51846acb53c4a0fde0094a33aab3b7bbc028c799dd3f7', '2026-10-11 13:12:23', '2026-10-11 13:13:23', 0, NULL, '2026-10-11 18:12:23'),
+(81, '3a3b002e09207a82c6ed0e55840429a3b28e0db3d2096e2c7fe618ac1d76aa5b', '2026-10-11 14:03:02', '2026-10-11 14:04:02', 0, NULL, '2026-10-11 19:03:02'),
+(82, '3a2a616c37a459b106b70357788ef3eb523c45f011ee44e45ce836b9175e0d05', '2026-10-11 14:04:03', '2026-10-11 14:05:03', 0, NULL, '2026-10-11 19:04:03'),
+(83, 'c4045a9f5b639e34573686be72a12b8f237aa6518ce8a6bd0d66fe6257c6c444', '2026-10-11 14:05:07', '2026-10-11 14:06:07', 0, NULL, '2026-10-11 19:05:07'),
+(84, '58ceb9d3225b17e0d798b41399c1cb892739004e0c5a970be2849055a910dc72', '2026-10-11 14:06:07', '2026-10-11 14:07:07', 0, NULL, '2026-10-11 19:06:07'),
+(85, 'a9c80a294de06a4af9d9b344b191a936d10410a554458a125ae38b42b3d4910d', '2026-10-11 14:08:28', '2026-10-11 14:09:28', 0, NULL, '2026-10-11 19:08:28'),
+(86, '41bf13552b129be55e2b2213f07d9f9d6eba57eabaff70a51c3dc203386ccb8c', '2026-10-11 14:09:28', '2026-10-11 14:10:28', 0, NULL, '2026-10-11 19:09:28'),
+(87, 'c957f9f80d8b7c31a68f01e32e58b05f7b79d662cac06d801e0558719e8199df', '2026-10-12 15:14:00', '2026-10-12 15:15:00', 0, NULL, '2026-10-12 20:14:00'),
+(88, '923fdcd6caf1e3c76394d7f428d57f92643b319d077e546f2d167710777e10ea', '2026-10-12 15:15:00', '2026-10-12 15:16:00', 0, NULL, '2026-10-12 20:15:00'),
+(89, '2432ad7563626e0236f8f6688895a0dfc7363a92b51884cf87fd835a02023e2b', '2026-10-12 15:16:01', '2026-10-12 15:17:01', 0, NULL, '2026-10-12 20:16:01'),
+(90, '8b55e462c6ddef91206feb338248ab00343b99b549e9cc4b7bb20cd99b7406cc', '2026-10-12 15:30:05', '2026-10-12 15:31:05', 0, NULL, '2026-10-12 20:30:05'),
+(91, 'a79fb458349f943ea2e29c488e61123fa9634e7f52857286e4ed7adc9b4be3e9', '2026-10-12 16:01:07', '2026-10-12 16:02:07', 0, NULL, '2026-10-12 21:01:07'),
+(92, '410633d57208ccf21df8341cdee162f9623e22dca50f6a7d23a2f0cdde4936dc', '2026-10-12 16:02:08', '2026-10-12 16:03:08', 0, NULL, '2026-10-12 21:02:08'),
+(93, 'aaafa8e08497c4d08def88aa5c00a99908e866c59c4a95b00a7fb95abd66c458', '2026-10-12 16:11:05', '2026-10-12 16:12:05', 0, NULL, '2026-10-12 21:11:05'),
+(94, '62c0709dbf009973f4456161701fbc696b433e2992912face83c8a95cb27c154', '2026-10-12 16:18:31', '2026-10-12 16:19:31', 0, NULL, '2026-10-12 21:18:31'),
+(95, '194a04d14efda9077e8e98c515d35cdb4fe0779f841beb44d3864735e0520106', '2026-10-12 16:19:31', '2026-10-12 16:20:31', 0, NULL, '2026-10-12 21:19:31'),
+(96, 'e10153133bb9198375adc92af79e1c5000d15b726799afb26991c12d475d1054', '2026-10-12 16:21:16', '2026-10-12 16:22:16', 0, NULL, '2026-10-12 21:21:16'),
+(97, 'bdc6c8afbb18ff18658ff7851bc7fe44185855b16ee531df7eda65e7a53b4d4e', '2026-10-12 16:22:17', '2026-10-12 16:23:17', 0, NULL, '2026-10-12 21:22:17'),
+(98, '3f142ba7fe2fda3a38f270bbab80bcfcf564394b873944bb854defbbe388a4ba', '2026-10-12 16:23:20', '2026-10-12 16:24:20', 0, NULL, '2026-10-12 21:23:20'),
+(99, '75b753557c532890d2202c6ac1245f3e63ff2a4a7ca3e7c84ce832726bf900c5', '2026-10-12 16:30:27', '2026-10-12 16:31:27', 0, NULL, '2026-10-12 21:30:27'),
+(100, '8b351fa031fb31e64596255af2f74a638d829f6259799453c21890cbdf3e99c0', '2026-10-12 16:31:42', '2026-10-12 16:32:42', 0, NULL, '2026-10-12 21:31:42'),
+(101, '7b3059bfffce122c2a23d57ccd213510009f70e11e07d5c0b31f79c5040559e2', '2026-10-12 16:36:23', '2026-10-12 16:37:23', 0, NULL, '2026-10-12 21:36:23'),
+(102, '24de3fd02cfc0635b7279c01e732254d920969689d52dce1285d60d972f59294', '2026-10-12 17:14:53', '2026-10-12 17:15:53', 0, NULL, '2026-10-12 22:14:53'),
+(103, '0eebbcaae23c8d97583bca57c6b5a2fbef98cb05950e0a17a1148c35f8fa42c8', '2026-10-12 17:15:53', '2026-10-12 17:16:53', 0, NULL, '2026-10-12 22:15:53'),
+(104, 'ac9b85451ea96d7d5e9c51870a6bb4c77dcb740ea384edddbf932e5a1a3e5880', '2026-10-12 17:16:53', '2026-10-12 17:17:53', 0, NULL, '2026-10-12 22:16:53'),
+(105, '91f0ae8d22fbc6e2b673eea4ec1d69cdbbf346eb8426ff457ce35ba74774c029', '2026-10-12 17:20:46', '2026-10-12 17:21:46', 0, NULL, '2026-10-12 22:20:46'),
+(106, '178619a8fdecb364b7b02771a221a49a41b0537f60f58728a43ce9be40c936ca', '2026-10-12 17:21:46', '2026-10-12 17:22:46', 0, NULL, '2026-10-12 22:21:46'),
+(107, '1a337bfb47f119145efa16fc2fc00b42951fe212d5bab6f1fa0f448f1d408045', '2026-10-12 17:24:02', '2026-10-12 17:25:02', 0, NULL, '2026-10-12 22:24:02'),
+(108, '134105a5ecb186bed5a9ba830fc266aa3e88a5618721fe05dac3e16f21955f2b', '2026-10-12 17:25:02', '2026-10-12 17:26:02', 0, NULL, '2026-10-12 22:25:02'),
+(109, 'e3415c15cf093feb7f62a873200c454db296a631f20de072284576cbfcc29c63', '2026-10-12 17:26:02', '2026-10-12 17:27:02', 0, NULL, '2026-10-12 22:26:02'),
+(110, '58f6f469502f38559e40329f72d26776ddbfa7303c60ff6f776198a10b9cc5c0', '2026-10-13 12:31:36', '2026-10-13 12:32:36', 0, NULL, '2026-10-13 17:31:36'),
+(111, 'f3cdede1c049e21340bbf9615a5eb31b0b59cd75e3d29171a295eef7dde63716', '2026-10-13 13:01:36', '2026-10-13 13:02:36', 0, NULL, '2026-10-13 18:01:36'),
+(112, 'c886ee4f4cafe9c4ffa01c8cf21aa4c52686a4930bf50d5b174d4e4c434bc4d4', '2026-10-13 13:02:36', '2026-10-13 13:03:36', 0, NULL, '2026-10-13 18:02:36'),
+(113, '8668dffc7b46a2122853be68f9881f59594a5a9e484967c342c119db2fcc4d93', '2026-10-13 13:03:36', '2026-10-13 13:04:36', 0, NULL, '2026-10-13 18:03:36'),
+(114, '355e23fa575f643c57a15e8489e2a7f3e16eb52e479ccc4b5d4d229f820fa30f', '2026-10-13 13:04:36', '2026-10-13 13:05:36', 0, NULL, '2026-10-13 18:04:36'),
+(115, '380edb85c409263f9b4107058734474a402125f73d2e2a0aebcc9047b4ac4bab', '2026-10-13 13:05:36', '2026-10-13 13:06:36', 0, NULL, '2026-10-13 18:05:36'),
+(116, 'e839b3dda31591fced97e62581915ad23a06e8b992da264e433f4e9cba51cd5f', '2026-10-13 13:06:36', '2026-10-13 13:07:36', 0, NULL, '2026-10-13 18:06:36'),
+(117, '100ccf1185d156eaf575efa8a848937119c89257393db1afd83f33cf850dda77', '2026-10-13 13:12:32', '2026-10-13 13:13:32', 0, NULL, '2026-10-13 18:12:32'),
+(118, '963398ada0a8bfc5c57b296de6f5b460a51605e3ac7406809a0a00fe13620d95', '2026-10-13 13:13:32', '2026-10-13 13:14:32', 0, NULL, '2026-10-13 18:13:32');
 
 -- --------------------------------------------------------
 
@@ -498,7 +603,7 @@ CREATE TABLE IF NOT EXISTS `tokens_sesion` (
   UNIQUE KEY `token` (`token`),
   KEY `usuario_id` (`usuario_id`),
   KEY `idx_token` (`token`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `tokens_sesion`
@@ -528,7 +633,42 @@ INSERT INTO `tokens_sesion` (`id`, `usuario_id`, `token`, `dispositivo`, `ip`, `
 (21, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE1MTcyODIsImV4cCI6MTc5MTU0NjA4Mn0.PxOSXgh3VzR3pshZ6Bwmuxq8wil_bWmN6N-LKNSZGlY', 'Android', '192.168.0.3', '2026-10-09 06:41:22', 0, '2026-10-09 03:41:22'),
 (22, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE1MTczNzgsImV4cCI6MTc5MTU0NjE3OH0.hoSyFYyItvNk0lNokB_33dgAsIHQ4G6MxGZPD2jHHRI', 'Android', '192.168.0.3', '2026-10-09 06:42:58', 0, '2026-10-09 03:42:58'),
 (23, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE1MTc5MzIsImV4cCI6MTc5MTU0NjczMn0.E8ZbanILZx0JC71GAFD-CzWoIwCWF5CXKmbcvhSuRKI', 'Android', '192.168.0.3', '2026-10-09 06:52:12', 0, '2026-10-09 03:52:12'),
-(24, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE1NjI5MzksImV4cCI6MTc5MTU5MTczOX0.61LpHYEVGGSsiiiW5VfQyY0vtW_pnIqaKtalBDgz1bU', 'Android', '192.168.0.3', '2026-10-09 19:22:19', 0, '2026-10-09 16:22:19');
+(24, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE1NjI5MzksImV4cCI6MTc5MTU5MTczOX0.61LpHYEVGGSsiiiW5VfQyY0vtW_pnIqaKtalBDgz1bU', 'Android', '192.168.0.3', '2026-10-09 19:22:19', 0, '2026-10-09 16:22:19'),
+(25, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE1ODU5MTYsImV4cCI6MTc5MTYxNDcxNn0.Lj__D6XRrRTpb97JQ-l2Dha8xcbnBPmIOBugyLo3jJM', 'Android', '192.168.0.3', '2026-10-10 01:45:16', 0, '2026-10-09 22:45:16'),
+(26, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE2ODg0OTYsImV4cCI6MTc5MTcxNzI5Nn0.RnMkpnAruq3Vc2zBdzJR6-CZJeqwI-ps56hINWZd3Os', 'Android', '192.168.0.3', '2026-10-11 06:14:56', 0, '2026-10-11 03:14:56'),
+(27, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE2OTM4ODAsImV4cCI6MTc5MTcyMjY4MH0.r6mMPGZp7UTE4qRmSixF5jDKBbsoHH_VenL9AIzneDs', 'Android', '192.168.0.3', '2026-10-11 07:44:40', 0, '2026-10-11 04:44:40'),
+(28, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE2OTQxMTgsImV4cCI6MTc5MTcyMjkxOH0.WvX-DfebfuNQ69TnmNzXIEVziWlA-zMMhmDmXpaZL_c', 'Android', '192.168.0.3', '2026-10-11 07:48:38', 0, '2026-10-11 04:48:38'),
+(29, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE2OTY0NDMsImV4cCI6MTc5MTcyNTI0M30.8apy_T-nYdJlYbvoURObt-yG8oa3XrgZxTaummdOH3A', 'Android', '192.168.0.3', '2026-10-11 08:27:23', 0, '2026-10-11 05:27:23'),
+(30, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE2OTY4NDcsImV4cCI6MTc5MTcyNTY0N30.7ICoWHblGVtf8FarlCzStqK1PURphNKfPNv-p6wcvC0', 'Android', '192.168.0.3', '2026-10-11 08:34:07', 0, '2026-10-11 05:34:07'),
+(31, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE2OTkwNjUsImV4cCI6MTc5MTcyNzg2NX0.yk5zpgWa4noYNk89cCit7ccNGMPDk_Judd_ImE8108k', 'Android', '192.168.0.3', '2026-10-11 09:11:05', 0, '2026-10-11 06:11:05'),
+(32, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE3Mzk4MzEsImV4cCI6MTc5MTc2ODYzMX0.cKRQW7lV1pIzwkkV29Yk9B8QcCA6vwXNXA6WR1Do8UY', 'Postman', '::1', '2026-10-11 20:30:31', 0, '2026-10-11 17:30:31'),
+(33, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE3NDEwNTcsImV4cCI6MTc5MTc2OTg1N30.2myiWJEBIMrNeFqKuf5iVyRwejseIjYx_MkDbmnFW_4', 'Android', '192.168.0.3', '2026-10-11 20:50:57', 0, '2026-10-11 17:50:57'),
+(34, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE3NDEwOTMsImV4cCI6MTc5MTc2OTg5M30.t_KWOpybFIS5lKPx25VMBx34ol_LTEti86K1f01-dyY', 'Android', '192.168.0.3', '2026-10-11 20:51:33', 0, '2026-10-11 17:51:33'),
+(35, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE3NDEzNTAsImV4cCI6MTc5MTc3MDE1MH0._Q5zAW4rtIiccKzFEFBI7unTonVJSZ26vui7QMNNB20', 'Android', '192.168.0.3', '2026-10-11 20:55:50', 0, '2026-10-11 17:55:51'),
+(36, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE3NDE4ODksImV4cCI6MTc5MTc3MDY4OX0.-MLLWuxv1vwDCrsRIWX6z7YE9IHchJo5jJxF9OijqzU', 'Android', '192.168.0.3', '2026-10-11 21:04:49', 0, '2026-10-11 18:04:49'),
+(37, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sIjoiYWRtaW4iLCJkb2NlbnRlX2lkIjpudWxsLCJpYXQiOjE3OTE3NDE5NDMsImV4cCI6MTc5MTc3MDc0M30.iWtvgClAI2bO-boIsneAEPDVF63MJKiWl137RV34ucM', 'Android', '192.168.0.3', '2026-10-11 21:05:43', 0, '2026-10-11 18:05:43'),
+(38, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxNzQyMzY3LCJleHAiOjE3OTE3NzExNjd9.F6pEjDd4dSh4Al0nSovgm5he8cHAw4865WBTTVsgLrc', 'Android', '192.168.0.3', '2026-10-11 21:12:47', 0, '2026-10-11 18:12:47'),
+(39, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sIjoiYWRtaW4iLCJkb2NlbnRlX2lkIjpudWxsLCJpYXQiOjE3OTE3NDM0MzgsImV4cCI6MTc5MTc3MjIzOH0.E9v89kVvtXhubRAc09r5qEnKKrPaq7sPxs0oAgFUKIc', 'Android', '192.168.0.3', '2026-10-11 21:30:38', 0, '2026-10-11 18:30:38'),
+(40, 1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sIjoiYWRtaW4iLCJkb2NlbnRlX2lkIjpudWxsLCJpYXQiOjE3OTE3NDM3NTQsImV4cCI6MTc5MTc3MjU1NH0.UDndOGQmWOyq-1bQA7Y1JG4ayeIEogCcdTzR-PdwIPg', 'Android', '192.168.0.3', '2026-10-11 21:35:54', 0, '2026-10-11 18:35:54'),
+(41, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxNzQzODA3LCJleHAiOjE3OTE3NzI2MDd9.3pcNIJzaRUPm_jVxrSh8XI5_4uGCWYg6wVoukLkhOoA', 'Android', '192.168.0.3', '2026-10-11 21:36:47', 0, '2026-10-11 18:36:47'),
+(42, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxODM1OTcxLCJleHAiOjE3OTE4NjQ3NzF9.vY5Rsr-ighQwmFV1QphhI4Q99S8w2vUxySSe1atyKRI', 'Android', '192.168.0.3', '2026-10-12 23:12:51', 0, '2026-10-12 20:12:51'),
+(43, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4MzYwOTUsImV4cCI6MTc5MTg2NDg5NX0.Dw9Yr5MM3Iz1Hz7tAeRDe3i3GsPaivRd_qNbrnpsflw', 'Android', '192.168.0.3', '2026-10-12 23:14:55', 0, '2026-10-12 20:14:55'),
+(44, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4MzcxNTcsImV4cCI6MTc5MTg2NTk1N30.HW8QHWxZBgOFXHvEWtatAx9dmXdpcJwj_2cnd_w0ZLs', 'Postman', '::1', '2026-10-12 23:32:37', 0, '2026-10-12 20:32:37'),
+(45, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4Mzc0NTAsImV4cCI6MTc5MTg2NjI1MH0.6cugiOIdBuKeF3wFbaykDCya01KycUIISr6v-iRNeG8', 'Postman', '::1', '2026-10-12 23:37:30', 0, '2026-10-12 20:37:30'),
+(46, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4Mzc0ODAsImV4cCI6MTc5MTg2NjI4MH0.voflSFX3Mf4Osy004a5cGPUMH54ANHH_-Hxu5vFLuhI', 'Postman', '::1', '2026-10-12 23:38:00', 0, '2026-10-12 20:38:00'),
+(47, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4MzkzNjksImV4cCI6MTc5MTg2ODE2OX0.G7B0eyEMZ0mzevUXSopKXoCnEXYYuzyxW8hb803Usdc', 'Android', '192.168.0.19', '2026-10-13 00:09:29', 0, '2026-10-12 21:09:29'),
+(48, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4Mzk4OTAsImV4cCI6MTc5MTg2ODY5MH0.Jw31vp3Yt2XCM4EAh1u8f7pcMXEOJbJTBuYTRk9trFE', 'Android', '192.168.0.3', '2026-10-13 00:18:10', 0, '2026-10-12 21:18:10'),
+(49, 4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo0LCJ1c2VybmFtZSI6ImpwZXJleiIsInJvbCI6ImRvY2VudGUiLCJkb2NlbnRlX2lkIjoxLCJpYXQiOjE3OTE4NDAxMTAsImV4cCI6MTc5MTg2ODkxMH0.OBgdbmA_AGogkOObrO5S8H2KzdG6KjHXcLYDLVLKZbA', 'Android', '192.168.0.3', '2026-10-13 00:21:50', 0, '2026-10-12 21:21:50'),
+(50, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxODQzMzU5LCJleHAiOjE3OTE4NzIxNTl9.rUiOvsnUm_TTE0gYX0KzkKDIA8k3CLuA7mQR-78lz0U', 'Android', '192.168.0.3', '2026-10-13 01:15:59', 0, '2026-10-12 22:15:59'),
+(51, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxODQzNDM2LCJleHAiOjE3OTE4NzIyMzZ9.smtWukWLuN57OzmyZK7b5eNzk46j72iyBIW2zRuk9nE', 'Android', '192.168.0.3', '2026-10-13 01:17:16', 0, '2026-10-12 22:17:16'),
+(52, 9, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo5LCJ1c2VybmFtZSI6InNjb2JlbmFzIiwicm9sIjoiZG9jZW50ZSIsImRvY2VudGVfaWQiOjYsImlhdCI6MTc5MTg0Mzg4NiwiZXhwIjoxNzkxODcyNjg2fQ.j9nfjUsG4iPw39yWzpGcQC9Koj5mcvqwVRJeedFRpl4', 'Android', '192.168.0.3', '2026-10-13 01:24:46', 0, '2026-10-12 22:24:46'),
+(53, 9, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo5LCJ1c2VybmFtZSI6InNjb2JlbmFzIiwicm9sIjoiZG9jZW50ZSIsImRvY2VudGVfaWQiOjYsImlhdCI6MTc5MTg0Mzk4MSwiZXhwIjoxNzkxODcyNzgxfQ.EO6QXYiG_3G2fNlXjLW9xVKa_Uwqfyu_QBreZF3ptFw', 'Android', '192.168.0.3', '2026-10-13 01:26:21', 0, '2026-10-12 22:26:21'),
+(54, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxOTEyNjExLCJleHAiOjE3OTE5NDE0MTF9.dtATO7FncTe0SwoE6w0j4M18UVLnRVsTuW_TNbD89Hg', 'Android', '192.168.0.3', '2026-10-13 20:30:11', 0, '2026-10-13 17:30:11'),
+(55, 9, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo5LCJ1c2VybmFtZSI6InNjb2JlbmFzIiwicm9sIjoiZG9jZW50ZSIsImRvY2VudGVfaWQiOjYsImlhdCI6MTc5MTkxNDQ4MCwiZXhwIjoxNzkxOTQzMjgwfQ.PWQpYPIFw42lpOQ9yueNXHjNFAXlep1VMbVbsGMU8X0', 'Android', '192.168.0.13', '2026-10-13 21:01:20', 0, '2026-10-13 18:01:20'),
+(56, 9, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo5LCJ1c2VybmFtZSI6InNjb2JlbmFzIiwicm9sIjoiZG9jZW50ZSIsImRvY2VudGVfaWQiOjYsImlhdCI6MTc5MTkxNDY1NywiZXhwIjoxNzkxOTQzNDU3fQ.yLNFyEBLvN2FS-Hv21Qs8TN3FzeEGmSIWhy-7nTeR4c', 'Android', '192.168.0.13', '2026-10-13 21:04:17', 0, '2026-10-13 18:04:17'),
+(57, 8, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo4LCJ1c2VybmFtZSI6IndnYXJjaWEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NSwiaWF0IjoxNzkxOTE0Nzg1LCJleHAiOjE3OTE5NDM1ODV9.6Qjsf7p_rrEa9visHpO6Exgv-XAKdOLIe4bvml1caSM', 'Android', '192.168.0.13', '2026-10-13 21:06:25', 0, '2026-10-13 18:06:25'),
+(58, 10, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjoxMCwidXNlcm5hbWUiOiJhcmlhbmEiLCJyb2wiOiJkb2NlbnRlIiwiZG9jZW50ZV9pZCI6NywiaWF0IjoxNzkxOTE1MTg2LCJleHAiOjE3OTE5NDM5ODZ9.wx9vtQk128q7yLbh3nb1ODu2uMCoGjcoTbOpTmZk1oU', 'Android', '192.168.0.13', '2026-10-13 21:13:06', 0, '2026-10-13 18:13:06'),
+(59, 9, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvX2lkIjo5LCJ1c2VybmFtZSI6InNjb2JlbmFzIiwicm9sIjoiZG9jZW50ZSIsImRvY2VudGVfaWQiOjYsImlhdCI6MTc5MTkxNTI5NSwiZXhwIjoxNzkxOTQ0MDk1fQ.w-DK9C02xuiCIff927JL0CfHhkET2cxK1J9MMABnFmo', 'Android', '192.168.0.13', '2026-10-13 21:14:55', 0, '2026-10-13 18:14:55');
 
 -- --------------------------------------------------------
 
@@ -548,19 +688,22 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `rol_id` (`rol_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id`, `username`, `password_hash`, `rol_id`, `activo`, `ultimo_login`, `created_at`) VALUES
-(1, 'admin', '$2y$10$pYh2xNzMv03yUBWnpiNVP.1TzFA24Mp4ZYAZ8VugjMVZ7qwRez1Mi', 1, 1, '2026-10-09 16:01:07', '2026-10-07 19:13:22'),
+(1, 'admin', '$2y$10$pYh2xNzMv03yUBWnpiNVP.1TzFA24Mp4ZYAZ8VugjMVZ7qwRez1Mi', 1, 1, '2026-10-13 13:07:52', '2026-10-07 19:13:22'),
 (3, 'coordinador', '$2y$10$bXQBgUnPrQcRhZgd9goLhu3VKvfFsAV9knrxk5pUBtGJee.17SlUO', 2, 1, '2026-10-09 11:30:08', '2026-10-07 20:08:15'),
-(4, 'jperez', '$2y$10$YVXDbawwQM2KX5fYov9TqO9BtjqF2tJZuEOR187rHeoX0A2fmf2M.', 3, 1, '2026-10-09 11:22:19', '2026-10-07 20:08:15'),
+(4, 'jperez', '$2y$10$YVXDbawwQM2KX5fYov9TqO9BtjqF2tJZuEOR187rHeoX0A2fmf2M.', 3, 1, '2026-10-12 16:21:50', '2026-10-07 20:08:15'),
 (5, 'mlopez', '$2y$10$C2kHSSjdTTrwh2dXDyrHwu7PbTp0LQu7BaktwA896FBQpSDvOKLi2', 3, 1, NULL, '2026-10-09 17:52:52'),
 (6, 'cramirez', '$2y$10$t/7B.fGxeHXuFZfwYK/vY.5d6GEjn9IUSicvChNwkVTKTnGp38RFu', 3, 1, NULL, '2026-10-09 18:08:04'),
-(7, 'fsantamaria', '$2y$10$F1s5H37tpb2D.gqL9RRazeI80G9lZiDzODCVh1aieHWsR96EFL.Mu', 3, 1, NULL, '2026-10-09 19:19:28');
+(7, 'fsantamaria', '$2y$10$F1s5H37tpb2D.gqL9RRazeI80G9lZiDzODCVh1aieHWsR96EFL.Mu', 3, 1, NULL, '2026-10-09 19:19:28'),
+(8, 'wgarcia', '$2y$10$uvFmiVbJ/EnT3odP0i4lj.9NFPpN9vcZDW1fULsnkjj3X6b3.yf1G', 3, 1, '2026-10-13 13:06:25', '2026-10-11 18:12:09'),
+(9, 'scobenas', '$2y$10$VCygz7x/wr9VpWKhFJny/uEAi8g13jNnLBWxaIxSLAxcWBTquirpi', 3, 1, '2026-10-13 13:14:55', '2026-10-12 22:23:41'),
+(10, 'ariana', '$2y$10$iAn2yfBa1uAz6oS0t0Zja.F3A2nSgkjlHRPfd1uLhlE8t/tzGCDYi', 3, 1, '2026-10-13 13:13:06', '2026-10-13 18:12:10');
 
 --
 -- Restricciones para tablas volcadas
