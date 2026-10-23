@@ -1,18 +1,33 @@
-public/uploads/justificaciones/*
-!public/uploads/justificaciones/.gitkeep
+# ============================================
+# ARCHIVOS SENSIBLES (CRÍTICO NO SUBIR)
+# ============================================
+
+# Configuración con credenciales de BD y JWT
+config/config.php
+
+# Claves personales
 Clave_GitHub_*.txt
 *.token
 *.secret
 
-# Archivos sensibles
-Clave_GitHub_*.txt
-*.token
-*.secret
+# ============================================
+# RESPALDOS DE BASE DE DATOS
+# ============================================
+backups/*.sql
+backups/*.zip
 
-# Uploads de usuarios (no versionar)
+# ============================================
+# UPLOADS DE USUARIOS (Archivos subidos)
+# ============================================
 public/uploads/justificaciones/*
 !public/uploads/justificaciones/.gitkeep
+uploads/
 
-# Uploads de usuarios (no versionar)
-public/uploads/justificaciones/*
-!public/uploads/justificaciones/.gitkeep
+# ============================================
+# ARCHIVOS DEL SISTEMA OPERATIVO / IDE
+# ============================================
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
