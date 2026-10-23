@@ -52,6 +52,18 @@ $assetV = fn(string $rel) => @filemtime($_SERVER['DOCUMENT_ROOT'] . $rel) ?: tim
                 <i class="bi bi-people"></i>
                 <span>Docentes</span>
             </a>
+
+            <a href="/asistencia-api/admin/usuarios"
+               class="nav-item <?= $paginaActiva === 'usuarios' ? 'active' : '' ?>">
+                <i class="bi bi-person-gear"></i>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="/asistencia-api/admin/turnos"
+                class="nav-item <?= $paginaActiva === 'turnos' ? 'active' : '' ?>">
+                <i class="bi bi-clock"></i>
+                <span>Turnos</span>
+            </a>
             <a href="/asistencia-api/admin/justificaciones"
                class="nav-item <?= $paginaActiva === 'justificaciones' ? 'active' : '' ?>">
                 <i class="bi bi-file-earmark-text"></i>
@@ -76,6 +88,11 @@ $assetV = fn(string $rel) => @filemtime($_SERVER['DOCUMENT_ROOT'] . $rel) ?: tim
         </nav>
 
         <div class="sidebar-footer">
+            <a href="/asistencia-api/admin/backups"
+               class="nav-item <?= $paginaActiva === 'backups' ? 'active' : '' ?>">
+                <i class="bi bi-database-fill-gear"></i>
+                <span>Backups</span>
+            </a>
             <a href="/asistencia-api/admin/logout" class="nav-item text-danger">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Cerrar sesión</span>

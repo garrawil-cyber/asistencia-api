@@ -4,15 +4,14 @@ namespace App\Admin\Controllers;
 use App\Admin\Middleware\SessionMiddleware;
 use App\Core\Request;
 use App\Core\Session;
+use App\Core\Database; // Agregado para consultar turnos
 use App\Models\Docente;
 use App\Models\Usuario;
 
 class DocenteController
 {
-    /**
-     * GET /admin/docentes
-     */
-    public function index(): void
+
+  public function index(): void
     {
         $user = SessionMiddleware::check();
 
@@ -48,9 +47,6 @@ class DocenteController
         require __DIR__ . '/../../../admin/views/docentes/index.php';
     }
 
-    /**
-     * GET /admin/docentes/crear
-     */
     public function mostrarCrear(): void
     {
         $user = SessionMiddleware::check();
@@ -60,10 +56,15 @@ class DocenteController
         Session::remove('errores');
         Session::remove('old');
 
+        // Obtener turnos activos
+        $db = Database::getConnection();
+        $turnos = $db->query("SELECT * FROM turnos WHERE activo = 1 ORDER BY hora_entrada")->fetchAll();
+
         $datos = [
             'user'         => $user,
             'errores'      => $errores,
             'old'          => $old,
+            'turnos'       => $turnos,
             'paginaActiva' => 'docentes'
         ];
 
@@ -71,9 +72,6 @@ class DocenteController
         require __DIR__ . '/../../../admin/views/docentes/crear.php';
     }
 
-    /**
-     * POST /admin/docentes/crear
-     */
     public function crear(): void
     {
         SessionMiddleware::check();
@@ -85,11 +83,11 @@ class DocenteController
             'email'        => trim(Request::input('email', '')),
             'telefono'     => trim(Request::input('telefono', '')),
             'especialidad' => trim(Request::input('especialidad', '')),
+            'turno_id'     => Request::input('turno_id', null), // NUEVO
             'username'     => trim(Request::input('username', '')),
             'password'     => Request::input('password', '')
         ];
 
-        // Validaciones
         $errores = $this->validar($datos, true);
 
         if (!empty($errores)) {
@@ -101,13 +99,11 @@ class DocenteController
 
         try {
             Docente::crearConUsuario($datos);
-
             Usuario::registrarLog(
-            (int)Session::get('usuario_id'),
+                (int)Session::get('usuario_id'),
                 'crear_docente',
                 'Creó al docente: ' . $datos['nombres'] . ' ' . $datos['apellidos']
             );
-
             Session::set('flash_exito', 'Docente registrado correctamente.');
             header('Location: /asistencia-api/admin/docentes');
             exit;
@@ -119,34 +115,31 @@ class DocenteController
         }
     }
 
-    /**
-     * GET /admin/docentes/editar/{id}
-     */
     public function mostrarEditar(string $id): void
     {
         $user = SessionMiddleware::check();
 
         $docente = Docente::buscarPorId((int)$id);
-        if (!$docente) {
-            Session::set('flash_error', 'Docente no encontrado.');
-            header('Location: /asistencia-api/admin/docentes');
-            exit;
-        }
+        if (!$docente) { /* ... */ }
 
         $errores = Session::get('errores', []);
         $old     = Session::get('old', []);
         Session::remove('errores');
         Session::remove('old');
 
-        // Si hay datos previos (por error de validación), usarlos
         if (!empty($old)) {
             $docente = array_merge($docente, $old);
         }
+
+        // Obtener turnos activos
+        $db = Database::getConnection();
+        $turnos = $db->query("SELECT * FROM turnos WHERE activo = 1 ORDER BY hora_entrada")->fetchAll();
 
         $datos = [
             'user'         => $user,
             'docente'      => $docente,
             'errores'      => $errores,
+            'turnos'       => $turnos,
             'paginaActiva' => 'docentes'
         ];
 
@@ -154,7 +147,7 @@ class DocenteController
         require __DIR__ . '/../../../admin/views/docentes/editar.php';
     }
 
-    /**
+        /**
      * POST /admin/docentes/editar/{id}
      */
     public function editar(string $id): void
@@ -175,7 +168,8 @@ class DocenteController
             'apellidos'    => trim(Request::input('apellidos', '')),
             'email'        => trim(Request::input('email', '')),
             'telefono'     => trim(Request::input('telefono', '')),
-            'especialidad' => trim(Request::input('especialidad', ''))
+            'especialidad' => trim(Request::input('especialidad', '')),
+            'turno_id'     => Request::input('turno_id', null) // NUEVO
         ];
 
         $errores = $this->validar($datos, false, $docenteId);
@@ -190,10 +184,11 @@ class DocenteController
         try {
             Docente::actualizar($docenteId, $datos);
 
+            // ✅ CORREGIDO AQUÍ: Se agregaron los 3 parámetros requeridos
             Usuario::registrarLog(
-            (int)Session::get('usuario_id'),
-            'editar_docente',
-            'Editó al docente: ' . $datos['nombres'] . ' ' . $datos['apellidos']
+                (int)Session::get('usuario_id'),
+                'editar_docente',
+                'Editó al docente: ' . $datos['nombres'] . ' ' . $datos['apellidos']
             );
 
             Session::set('flash_exito', 'Docente actualizado correctamente.');
@@ -235,7 +230,7 @@ class DocenteController
         header('Location: /asistencia-api/admin/docentes');
     }
 
-    /**
+       /**
      * Valida los datos de entrada.
      */
     private function validar(array $datos, bool $esCreacion, int $excluirId = 0): array
@@ -296,6 +291,38 @@ class DocenteController
                 $errores['password'] = 'La contraseña es obligatoria.';
             } elseif (strlen($datos['password']) < 6) {
                 $errores['password'] = 'La contraseña debe tener al menos 6 caracteres.';
+            }
+        }
+
+        // NUEVA VALIDACIÓN: Turno único por docente
+        if (empty($datos['turno_id'])) {
+            $errores['turno_id'] = 'Debes asignar un turno al docente.';
+        } else {
+            // Verificar si el docente ya tiene un turno asignado diferente
+            if (!$esCreacion && $excluirId > 0) {
+                // ✅ CORREGIDO AQUÍ: Usar Docente:: en lugar de self::
+                $docenteActual = Docente::buscarPorId($excluirId);
+                
+                // Si el docente ya tenía un turno y se intenta cambiar a otro
+                if ($docenteActual && $docenteActual['turno_id'] != $datos['turno_id']) {
+                    // Verificar si ya hay asistencias registradas en el turno anterior
+                    $db = Database::getConnection();
+                    $stmt = $db->prepare("SELECT COUNT(*) FROM asistencias WHERE docente_id = ? AND turno_id = ?");
+                    $stmt->execute([$excluirId, $docenteActual['turno_id']]);
+                    $asistenciasAnteriores = (int)$stmt->fetchColumn();
+                    
+                    if ($asistenciasAnteriores > 0) {
+                        $errores['turno_id'] = 'No puedes cambiar el turno de este docente porque ya tiene asistencias registradas en su turno actual.';
+                    }
+                }
+            }
+            
+            // Verificar que el turno seleccionado exista y esté activo
+            $db = Database::getConnection();
+            $stmt = $db->prepare("SELECT id FROM turnos WHERE id = ? AND activo = 1");
+            $stmt->execute([$datos['turno_id']]);
+            if (!$stmt->fetch()) {
+                $errores['turno_id'] = 'El turno seleccionado no es válido o está inactivo.';
             }
         }
 

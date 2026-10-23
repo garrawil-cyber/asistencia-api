@@ -989,3 +989,31 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============ VENTANAS DE MARCADO ============ */
+.ventana-bloque {
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+}
+
+.ventana-titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding: 4px 10px;
+    background: var(--primary-light);
+    border-radius: 20px;
+}
+
+.ventana-titulo i {
+    font-size: 1rem;
+}

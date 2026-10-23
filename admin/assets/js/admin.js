@@ -279,6 +279,109 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+        // ========================================
+    // SweetAlert: Confirmar toggle de turno
+    // ========================================
+    document.querySelectorAll('[data-action="toggle-turno"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nombre = this.dataset.nombre;
+            const activo = this.dataset.activo === '1';
+            const docentes = parseInt(this.dataset.docentes) || 0;
+
+            let mensaje = activo
+                ? `Vas a desactivar el turno <strong>${nombre}</strong>.`
+                : `Vas a activar el turno <strong>${nombre}</strong>.`;
+
+            if (activo && docentes > 0) {
+                mensaje += `<br><br><strong class="text-danger">⚠️ Hay ${docentes} docente(s) asignado(s) a este turno.</strong><br>
+                           <small class="text-muted">Si desactivas el turno, esos docentes no podrán marcar asistencia.</small>`;
+            }
+
+            Swal.fire({
+                title: activo ? '¿Desactivar turno?' : '¿Activar turno?',
+                html: mensaje,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: activo ? 'Sí, desactivar' : 'Sí, activar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: activo ? '#ef4444' : '#10b981',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/asistencia-api/admin/turnos/toggle/${id}`;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // ========================================
+    // SweetAlert: Eliminar Backup
+    // ========================================
+    document.querySelectorAll('[data-action="eliminar-backup"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const nombre = this.dataset.nombre;
+
+            Swal.fire({
+                title: '¿Eliminar backup?',
+                html: `Vas a eliminar el archivo <strong>${nombre}</strong>.<br>
+                       <small class="text-muted">Esta acción no se puede deshacer.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/asistencia-api/admin/backups/eliminar/${nombre}`;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // ========================================
+    // SweetAlert: Confirmar toggle de usuario
+    // ========================================
+    document.querySelectorAll('[data-action="toggle-usuario"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nombre = this.dataset.nombre;
+            const activo = this.dataset.activo === '1';
+
+            Swal.fire({
+                title: activo ? '¿Desactivar usuario?' : '¿Activar usuario?',
+                html: `Vas a ${activo ? 'desactivar' : 'activar'} a <strong>${nombre}</strong>.<br>
+                       <small class="text-muted">${activo ? 'El usuario no podrá acceder al panel hasta que lo reactives.' : 'El usuario podrá volver a acceder al panel.'}</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: activo ? 'Sí, desactivar' : 'Sí, activar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: activo ? '#ef4444' : '#10b981',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/asistencia-api/admin/usuarios/toggle/${id}`;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
+
 });  //cierre del DOMContentLoaded
 
 
@@ -366,7 +469,14 @@ function inicializarValidaciones(form) {
             if (!v) return 'La contraseña es obligatoria.';
             if (v.length < 6) return 'Mínimo 6 caracteres.';
             return null;
+        },
+
+        turno_id: (input) => {
+            const v = input.value;
+            if (!v) return 'Debes seleccionar un turno.';
+            return null;
         }
+        
     };
 
     // -------- Filtros de entrada --------

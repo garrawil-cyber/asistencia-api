@@ -95,6 +95,25 @@ function old($doc, $campo, $default = '') {
                                class="form-control"
                                value="<?= old($docente, 'especialidad') ?>">
                     </div>
+
+                    <!-- SELECTOR DE TURNO -->
+                    <div class="col-md-3">
+                        <label class="form-label">Turno <span class="text-danger">*</span></label>
+                        <select name="turno_id" class="form-select <?= err($errores,'turno_id') ? 'is-invalid' : '' ?>" required>
+                            <option value="">Seleccione un turno...</option>
+                            <?php foreach ($turnos as $t): ?>
+                                <option value="<?= $t['id'] ?>" 
+                                    <?= ($docente['turno_id'] ?? '') == $t['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($t['nombre']) ?> 
+                                    (<?= substr($t['hora_entrada'], 0, 5) ?> - <?= substr($t['hora_salida'], 0, 5) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="invalid-feedback"><?= err($errores,'turno_id') ?></div>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle"></i> Si el docente ya tiene asistencias, el turno no podrá modificarse.
+                        </small>
+                    </div>
                 </div>
 
                 <div class="form-actions">

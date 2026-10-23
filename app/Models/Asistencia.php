@@ -5,123 +5,7 @@ use App\Core\Database;
 
 class Asistencia
 {
-        /**
-     * Devuelve el registro del turno del docente para HOY.
-     * Con el sistema multi-turno, un docente solo tiene 1 turno asignado.
-     */
-    public static function buscarHoy(int $docenteId): ?array
-    {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
-            SELECT a.id, a.docente_id, a.turno_id, a.bloque, a.fecha,
-                   a.hora_entrada, a.hora_salida, a.minutos_tardanza,
-                   a.metodo_marcacion, a.estado_salida, a.observacion,
-                   e.codigo AS estado,
-                   e.descripcion AS estado_descripcion
-            FROM asistencias a
-            JOIN estados_asistencia e ON e.id = a.estado_id
-            WHERE a.docente_id = ? AND a.fecha = CURDATE()
-            ORDER BY a.id DESC
-            LIMIT 1
-        ");
-        $stmt->execute([$docenteId]);
-        return $stmt->fetch() ?: null;
-    }
-
-       /**
-     * Registra la ENTRADA del día.
-     * Ahora incluye turno_id y bloque.
-     */
-    public static function registrarEntrada(
-        int $docenteId,
-        int $turnoId,
-        string $bloque,
-        string $horaEntrada,
-        string $estado,
-        int $minutos
-    ): int {
-        $db = Database::getConnection();
-        $estadoId = self::idEstado($estado);
-        $fecha = substr($horaEntrada, 0, 10);
-
-        try {
-            $stmt = $db->prepare("
-                INSERT INTO asistencias
-                    (docente_id, turno_id, bloque, fecha, hora_entrada,
-                     minutos_tardanza, estado_id, metodo_marcacion)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'qr')
-            ");
-            $stmt->execute([
-                $docenteId,
-                $turnoId,
-                $bloque,
-                $fecha,
-                $horaEntrada,
-                $minutos,
-                $estadoId
-            ]);
-            return (int)$db->lastInsertId();
-        } catch (\PDOException $e) {
-            if ($e->getCode() === '23000') {
-                throw new \RuntimeException('Ya registraste tu entrada hoy', 409);
-            }
-            throw $e;
-        }
-    }
-
     /**
-     * Registra la SALIDA sobre un registro de asistencia existente.
-     */
-    public static function registrarSalida(
-        int $asistenciaId,
-        string $horaSalida,
-        string $estadoSalida
-    ): void {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
-            UPDATE asistencias 
-            SET hora_salida = ?, estado_salida = ?
-            WHERE id = ?
-        ");
-        $stmt->execute([$horaSalida, $estadoSalida, $asistenciaId]);
-    }
-
-    /**
-     * Historial de asistencias en un rango de fechas.
-     */
-    public static function historial(int $docenteId, string $desde, string $hasta): array
-    {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
-            SELECT a.id, a.fecha, a.hora_entrada, a.hora_salida,
-                   a.minutos_tardanza, a.metodo_marcacion, a.observacion,
-                   e.codigo AS estado
-            FROM asistencias a
-            JOIN estados_asistencia e ON e.id = a.estado_id
-            WHERE a.docente_id = ? AND a.fecha BETWEEN ? AND ?
-            ORDER BY a.fecha DESC
-        ");
-        $stmt->execute([$docenteId, $desde, $hasta]);
-        return $stmt->fetchAll();
-    }
-
-    /**
-     * Obtiene el ID del estado a partir de su código.
-     */
-    private static function idEstado(string $codigo): int
-    {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("SELECT id FROM estados_asistencia WHERE codigo = ?");
-        $stmt->execute([$codigo]);
-        $id = $stmt->fetchColumn();
-
-        if (!$id) {
-            throw new \RuntimeException("Estado de asistencia desconocido: $codigo", 500);
-        }
-        return (int)$id;
-    }
-
-        /**
      * Lista de asistencias con filtros y paginación (para el panel admin).
      */
     public static function listarConFiltros(
@@ -130,7 +14,8 @@ class Asistencia
         int $docenteId = 0,
         string $estado = '',
         int $limit = 20,
-        int $offset = 0
+        int $offset = 0,
+        int $turnoId = 0 // NUEVO
     ): array {
         $db = Database::getConnection();
 
@@ -145,6 +30,11 @@ class Asistencia
         if ($estado !== '') {
             $where[] = "e.codigo = ?";
             $params[] = $estado;
+        }
+
+        if ($turnoId > 0) { // NUEVO
+            $where[] = "a.turno_id = ?";
+            $params[] = $turnoId;
         }
 
         $whereSql = 'WHERE ' . implode(' AND ', $where);
@@ -163,10 +53,12 @@ class Asistencia
                 d.dni,
                 d.nombres,
                 d.apellidos,
-                d.especialidad
+                d.especialidad,
+                t.nombre AS turno_nombre -- NUEVO
             FROM asistencias a
             JOIN docentes d ON d.id = a.docente_id
             JOIN estados_asistencia e ON e.id = a.estado_id
+            LEFT JOIN turnos t ON t.id = a.turno_id -- NUEVO
             $whereSql
             ORDER BY a.fecha DESC, a.hora_entrada DESC
             LIMIT $limit OFFSET $offset
@@ -184,7 +76,8 @@ class Asistencia
         string $desde,
         string $hasta,
         int $docenteId = 0,
-        string $estado = ''
+        string $estado = '',
+        int $turnoId = 0 // NUEVO
     ): int {
         $db = Database::getConnection();
 
@@ -199,6 +92,11 @@ class Asistencia
         if ($estado !== '') {
             $where[] = "e.codigo = ?";
             $params[] = $estado;
+        }
+
+        if ($turnoId > 0) { // NUEVO
+            $where[] = "a.turno_id = ?";
+            $params[] = $turnoId;
         }
 
         $whereSql = 'WHERE ' . implode(' AND ', $where);
@@ -219,7 +117,8 @@ class Asistencia
     public static function resumenPorEstado(
         string $desde,
         string $hasta,
-        int $docenteId = 0
+        int $docenteId = 0,
+        int $turnoId = 0 // NUEVO
     ): array {
         $db = Database::getConnection();
 
@@ -229,6 +128,11 @@ class Asistencia
         if ($docenteId > 0) {
             $where[] = "a.docente_id = ?";
             $params[] = $docenteId;
+        }
+
+        if ($turnoId > 0) { // NUEVO
+            $where[] = "a.turno_id = ?";
+            $params[] = $turnoId;
         }
 
         $whereSql = 'WHERE ' . implode(' AND ', $where);
@@ -258,15 +162,16 @@ class Asistencia
     }
 
     /**
-     * Datos para exportar a CSV (sin paginación).
+     * Datos para exportar a CSV/Excel (sin paginación).
      */
     public static function exportarConFiltros(
         string $desde,
         string $hasta,
         int $docenteId = 0,
-        string $estado = ''
+        string $estado = '',
+        int $turnoId = 0 // NUEVO
     ): array {
-        return self::listarConFiltros($desde, $hasta, $docenteId, $estado, 10000, 0);
+        return self::listarConFiltros($desde, $hasta, $docenteId, $estado, 10000, 0, $turnoId);
     }
 
         /**
@@ -276,43 +181,91 @@ class Asistencia
      * - completo: marcó entrada y salida
      */
     public static function estadoHoy(int $docenteId): array
+{
+    $db = Database::getConnection();
+    
+    // 1. Obtener el turno del docente
+    $stmtTurno = $db->prepare("
+        SELECT t.nombre AS turno_nombre, t.hora_entrada, t.hora_salida 
+        FROM docentes d 
+        JOIN turnos t ON t.id = d.turno_id 
+        WHERE d.id = ?
+    ");
+    $stmtTurno->execute([$docenteId]);
+    $turno = $stmtTurno->fetch();
+
+    // 2. Buscar la asistencia de hoy
+    $stmt = $db->prepare("
+        SELECT a.*, e.codigo AS estado 
+        FROM asistencias a 
+        JOIN estados_asistencia e ON e.id = a.estado_id 
+        WHERE a.docente_id = ? AND a.fecha = CURDATE() LIMIT 1
+    ");
+    $stmt->execute([$docenteId]);
+    $asistencia = $stmt->fetch();
+
+    if (!$asistencia) {
+        return [
+            'estado' => 'sin_marcar',
+            'entrada' => null,
+            'salida' => null,
+            'minutos_tardanza' => 0,
+            'estado_asistencia' => null,
+            // NUEVOS CAMPOS
+            'turno_nombre' => $turno['turno_nombre'] ?? 'Sin turno',
+            'turno_hora_entrada' => $turno['hora_entrada'] ?? null,
+            'turno_hora_salida' => $turno['hora_salida'] ?? null
+        ];
+    }
+
+    return [
+        'estado' => $asistencia['hora_salida'] ? 'completo' : 'entrada_marcada',
+        'entrada' => $asistencia['hora_entrada'],
+        'salida' => $asistencia['hora_salida'],
+        'minutos_tardanza' => (int)$asistencia['minutos_tardanza'],
+        'estado_asistencia' => $asistencia['estado'],
+        // NUEVOS CAMPOS
+        'turno_nombre' => $turno['turno_nombre'] ?? 'Sin turno',
+        'turno_hora_entrada' => $turno['hora_entrada'] ?? null,
+        'turno_hora_salida' => $turno['hora_salida'] ?? null
+    ];
+}
+
+    /**
+     * Busca la asistencia del docente para la fecha de HOY.
+     * Devuelve null si no ha marcado nada.
+     */
+    public static function buscarHoy(int $docenteId): ?array
     {
         $db = Database::getConnection();
         $stmt = $db->prepare("
-            SELECT
-                a.id,
-                a.fecha,
-                a.hora_entrada,
-                a.hora_salida,
-                a.minutos_tardanza,
-                e.codigo AS estado
+            SELECT a.*, e.codigo AS estado
             FROM asistencias a
             JOIN estados_asistencia e ON e.id = a.estado_id
             WHERE a.docente_id = ? AND a.fecha = CURDATE()
             LIMIT 1
         ");
         $stmt->execute([$docenteId]);
-        $asistencia = $stmt->fetch();
+        return $stmt->fetch() ?: null;
+    }
 
-        if (!$asistencia) {
-            return [
-                'estado' => 'sin_marcar',
-                'entrada' => null,
-                'salida' => null,
-                'minutos_tardanza' => 0,
-                'estado_asistencia' => null
-            ];
-        }
-
-        $estadoGeneral = $asistencia['hora_salida'] ? 'completo' : 'entrada_marcada';
-
-        return [
-            'estado' => $estadoGeneral,
-            'entrada' => $asistencia['hora_entrada'],
-            'salida' => $asistencia['hora_salida'],
-            'minutos_tardanza' => (int)$asistencia['minutos_tardanza'],
-            'estado_asistencia' => $asistencia['estado']
-        ];
+        /**
+     * Devuelve el historial de asistencias de un docente en un rango de fechas.
+     */
+    public static function historial(int $docenteId, string $desde, string $hasta): array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("
+            SELECT a.fecha, a.hora_entrada, a.hora_salida, a.minutos_tardanza,
+                   e.codigo AS estado, t.nombre AS turno_nombre
+            FROM asistencias a
+            JOIN estados_asistencia e ON e.id = a.estado_id
+            LEFT JOIN turnos t ON t.id = a.turno_id
+            WHERE a.docente_id = ? AND a.fecha BETWEEN ? AND ?
+            ORDER BY a.fecha DESC
+        ");
+        $stmt->execute([$docenteId, $desde, $hasta]);
+        return $stmt->fetchAll();
     }
 
 }

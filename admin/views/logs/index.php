@@ -156,7 +156,15 @@ $accionesInfo = [
                                 </small>
                             </td>
                             <td>
-                                <code class="small text-muted"><?= htmlspecialchars($l['ip']) ?></code>
+                                <?php 
+                                    $ip = $l['ip'];
+                                    // Traducir localhost a un texto amigable
+                                    if ($ip === '::1' || $ip === '127.0.0.1') {
+                                        echo '<span class="badge bg-secondary-subtle text-secondary border"><i class="bi bi-pc-display"></i> Local</span>';
+                                    } else {
+                                        echo '<code class="small text-muted">' . htmlspecialchars($ip) . '</code>';
+                                    }
+                                ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

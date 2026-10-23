@@ -11,10 +11,12 @@ class Docente
     {
         $db = Database::getConnection();
         $stmt = $db->prepare("
-            SELECT d.*, u.username, u.activo AS usuario_activo, r.nombre AS rol
+            SELECT d.*, u.username, u.activo AS usuario_activo, r.nombre AS rol,
+                   t.nombre AS turno_nombre
             FROM docentes d
             LEFT JOIN usuarios u ON u.id = d.usuario_id
             LEFT JOIN roles r ON r.id = u.rol_id
+            LEFT JOIN turnos t ON t.id = d.turno_id
             WHERE d.id = ?
         ");
         $stmt->execute([$id]);
@@ -29,14 +31,11 @@ class Docente
         return $stmt->fetch() ?: null;
     }
 
-    /**
-     * Lista docentes con filtros y paginación.
-     */
     public static function listar(
         int $limit = 20,
         int $offset = 0,
         string $busqueda = '',
-        string $estado = ''   // '' | 'activos' | 'inactivos'
+        string $estado = ''
     ): array {
         $db = Database::getConnection();
 
@@ -57,9 +56,11 @@ class Docente
         $sql = "
             SELECT d.id, d.dni, d.nombres, d.apellidos, d.email,
                    d.telefono, d.especialidad, d.activo, d.created_at,
-                   u.username, u.id AS usuario_id
+                   u.username, u.id AS usuario_id,
+                   t.nombre AS turno_nombre
             FROM docentes d
             LEFT JOIN usuarios u ON u.id = d.usuario_id
+            LEFT JOIN turnos t ON t.id = d.turno_id
             $whereSql
             ORDER BY d.activo DESC, d.apellidos ASC, d.nombres ASC
             LIMIT $limit OFFSET $offset
@@ -70,9 +71,6 @@ class Docente
         return $stmt->fetchAll();
     }
 
-    /**
-     * Cuenta total para paginación.
-     */
     public static function contar(string $busqueda = '', string $estado = ''): int
     {
         $db = Database::getConnection();
@@ -103,10 +101,6 @@ class Docente
 
     /** ==================== ESCRITURA ==================== */
 
-    /**
-     * Crea un docente Y su usuario en una sola transacción.
-     * Devuelve el ID del docente creado.
-     */
     public static function crearConUsuario(array $datos): int
     {
         $db = Database::getConnection();
@@ -125,8 +119,8 @@ class Docente
             // 2. Crear docente
             $stmt = $db->prepare("
                 INSERT INTO docentes
-                    (usuario_id, dni, nombres, apellidos, email, telefono, especialidad, activo)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+                    (usuario_id, dni, nombres, apellidos, email, telefono, especialidad, turno_id, activo)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
             ");
             $stmt->execute([
                 $usuarioId,
@@ -135,7 +129,8 @@ class Docente
                 $datos['apellidos'],
                 $datos['email'] ?? null,
                 $datos['telefono'] ?? null,
-                $datos['especialidad'] ?? null
+                $datos['especialidad'] ?? null,
+                !empty($datos['turno_id']) ? (int)$datos['turno_id'] : null
             ]);
             $docenteId = (int)$db->lastInsertId();
 
@@ -147,21 +142,19 @@ class Docente
         }
     }
 
-    /**
-     * Actualiza datos del docente (no toca el usuario/password).
-     */
     public static function actualizar(int $id, array $datos): bool
     {
         $db = Database::getConnection();
 
         $campos = [];
         $params = [];
-        $permitidos = ['dni', 'nombres', 'apellidos', 'email', 'telefono', 'especialidad'];
+        $permitidos = ['dni', 'nombres', 'apellidos', 'email', 'telefono', 'especialidad', 'turno_id'];
 
         foreach ($permitidos as $campo) {
             if (array_key_exists($campo, $datos)) {
                 $campos[] = "$campo = ?";
-                $params[] = $datos[$campo];
+                // Convertir cadena vacía a NULL para turno_id
+                $params[] = ($campo === 'turno_id' && empty($datos[$campo])) ? null : $datos[$campo];
             }
         }
 
@@ -172,9 +165,6 @@ class Docente
         return $stmt->execute($params);
     }
 
-    /**
-     * Activa o desactiva un docente (soft delete).
-     */
     public static function cambiarEstado(int $id, bool $activo): bool
     {
         $db = Database::getConnection();
@@ -183,7 +173,6 @@ class Docente
             $stmt = $db->prepare("UPDATE docentes SET activo = ? WHERE id = ?");
             $stmt->execute([$activo ? 1 : 0, $id]);
 
-            // Sincronizar el usuario asociado
             $stmt = $db->prepare("
                 UPDATE usuarios u
                 JOIN docentes d ON d.usuario_id = u.id
@@ -244,4 +233,24 @@ class Docente
         $stmt->execute($params);
         return (int)$stmt->fetchColumn() > 0;
     }
+    /**
+     * Cuenta cuántos docentes están asignados a un turno.
+     * Opcionalmente excluye a un docente (útil al editar).
+     */
+    public static function contarPorTurno(int $turnoId, int $excluirDocenteId = 0): int
+    {
+        $db = Database::getConnection();
+        $sql = "SELECT COUNT(*) FROM docentes WHERE turno_id = ? AND activo = 1";
+        $params = [$turnoId];
+        
+        if ($excluirDocenteId > 0) {
+            $sql .= " AND id != ?";
+            $params[] = $excluirDocenteId;
+        }
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
 }

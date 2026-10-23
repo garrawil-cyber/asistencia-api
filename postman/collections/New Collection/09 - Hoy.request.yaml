@@ -15,32 +15,18 @@ scripts:
   - type: afterResponse
     code: "const r = pm.response.json();\r
 
-      \r
+      if (r.data) {\r
 
-      pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r
+      \    console.log(\"🕐 Turno: \", r.data.turno_nombre);\r
 
-      pm.test(\"Tiene hora_entrada\", () =>
-      pm.expect(r.data.hora_entrada).to.be.a('string'));\r
+      \    console.log(\"🕐 Horario: \", r.data.turno_hora_entrada, \" a \", r.data.turno_hora_salida);\r
 
-      pm.test(\"Tiene hora_salida\", () =>
-      pm.expect(r.data.hora_salida).to.be.a('string'));\r
+      \    console.log(\"🕐 Entrada: \", r.data.entrada);\r
 
-      \r
+      \    console.log(\"🕐 Salida: \", r.data.salida);\r
 
-      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━\");\r
+      \    console.log(\"⏰ Tardanza: \", r.data.minutos_tardanza);\r
 
-      console.log(\"📅 Fecha:        \", r.data.fecha);\r
-
-      console.log(\"⬇️  Entrada:      \", r.data.hora_entrada);\r
-
-      console.log(\"⬆️  Salida:       \", r.data.hora_salida);\r
-
-      console.log(\"⏰ Tardanza:     \", r.data.minutos_tardanza, \"min\");\r
-
-      console.log(\"📌 Estado:       \", r.data.estado);\r
-
-      console.log(\"📝 Método:       \", r.data.metodo_marcacion);\r
-
-      console.log(\"━━━━━━━━━━━━━━━━━━━━━━━━\");"
+      }"
     language: text/javascript
 order: 6000

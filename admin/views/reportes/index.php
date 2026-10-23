@@ -9,7 +9,8 @@ require __DIR__ . '/../layouts/header.php';
 $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                   || ($hasta !== date('Y-m-d'))
                   || ($docenteId > 0)
-                  || ($estado !== '');
+                  || ($estado !== '')
+                  || (isset($turnoId) && $turnoId > 0);
 ?>
 
 <!-- ============ FILTROS COLAPSABLES ============ -->
@@ -20,13 +21,12 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
             Reportes de Asistencia
         </h2>
         <div class="d-flex gap-2">
-            <a href="/asistencia-api/admin/reportes/exportar?desde=<?= $desde ?>&hasta=<?= $hasta ?>&docente_id=<?= $docenteId ?>&estado=<?= $estado ?>"
+            <a href="/asistencia-api/admin/reportes/exportar?desde=<?= $desde ?>&hasta=<?= $hasta ?>&docente_id=<?= $docenteId ?>&estado=<?= $estado ?>&turno_id=<?= $turnoId ?? 0 ?>"
                class="btn btn-success btn-sm">
                 <i class="bi bi-file-earmark-excel"></i> Excel
             </a>
-            <a href="/asistencia-api/admin/reportes/exportar-pdf?desde=<?= $desde ?>&hasta=<?= $hasta ?>&docente_id=<?= $docenteId ?>&estado=<?= $estado ?>"
-               class="btn btn-danger btn-sm"
-               target="_blank">
+            <a href="/asistencia-api/admin/reportes/exportar-pdf?desde=<?= $desde ?>&hasta=<?= $hasta ?>&docente_id=<?= $docenteId ?>&estado=<?= $estado ?>&turno_id=<?= $turnoId ?? 0 ?>"
+               class="btn btn-danger btn-sm" target="_blank">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </a>
         </div>
@@ -49,13 +49,11 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
             <div class="row g-3">
                 <div class="col-md-2">
                     <label class="form-label"><i class="bi bi-calendar-event"></i> Desde</label>
-                    <input type="date" name="desde" class="form-control"
-                           value="<?= htmlspecialchars($desde) ?>">
+                    <input type="date" name="desde" class="form-control" value="<?= htmlspecialchars($desde) ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label"><i class="bi bi-calendar-event"></i> Hasta</label>
-                    <input type="date" name="hasta" class="form-control"
-                           value="<?= htmlspecialchars($hasta) ?>">
+                    <input type="date" name="hasta" class="form-control" value="<?= htmlspecialchars($hasta) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><i class="bi bi-person"></i> Docente</label>
@@ -64,6 +62,18 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                         <?php foreach ($docentes as $d): ?>
                             <option value="<?= $d['id'] ?>" <?= $docenteId === (int)$d['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($d['apellidos'] . ', ' . $d['nombres']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <!-- NUEVO FILTRO: TURNO -->
+                <div class="col-md-2">
+                    <label class="form-label"><i class="bi bi-clock"></i> Turno</label>
+                    <select name="turno_id" class="form-select">
+                        <option value="0">Todos</option>
+                        <?php foreach ($turnos as $t): ?>
+                            <option value="<?= $t['id'] ?>" <?= (isset($turnoId) && $turnoId == $t['id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($t['nombre']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -79,23 +89,15 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                         <option value="falta_salida" <?= $estado === 'falta_salida' ? 'selected' : '' ?>>Falta salida</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex align-items-end gap-2">
-                    <button type="submit" class="btn btn-primary flex-grow-1">
-                        <i class="bi bi-search"></i> Filtrar
-                    </button>
-                    <a href="/asistencia-api/admin/reportes" class="btn btn-outline-secondary" title="Limpiar filtros">
-                        <i class="bi bi-x-lg"></i>
-                    </a>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-search"></i> Filtrar</button>
+                    <a href="/asistencia-api/admin/reportes" class="btn btn-outline-secondary" title="Limpiar filtros"><i class="bi bi-x-lg"></i></a>
                 </div>
             </div>
-
-            <!-- Info rápida del rango -->
             <div class="filters-info mt-3">
                 <i class="bi bi-info-circle"></i>
-                Mostrando asistencias del
-                <strong><?= date('d/m/Y', strtotime($desde)) ?></strong>
-                al
-                <strong><?= date('d/m/Y', strtotime($hasta)) ?></strong>
+                Mostrando asistencias del <strong><?= date('d/m/Y', strtotime($desde)) ?></strong>
+                al <strong><?= date('d/m/Y', strtotime($hasta)) ?></strong>
                 <?= $docenteId > 0 ? '· filtrado por docente' : '' ?>
                 <?= $estado !== '' ? '· estado: ' . ucfirst($estado) : '' ?>
             </div>
@@ -117,9 +119,7 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
             <div class="kpi-icon"><i class="bi bi-check2-circle"></i></div>
             <div class="kpi-label">Presentes</div>
             <div class="kpi-value"><?= $resumen['presente'] ?></div>
-            <div class="kpi-trend">
-                <i class="bi bi-arrow-up"></i> <?= $porcentajePresente ?>% del total
-            </div>
+            <div class="kpi-trend"><i class="bi bi-arrow-up"></i> <?= $porcentajePresente ?>% del total</div>
         </div>
     </div>
     <div class="col-md-3 col-sm-6">
@@ -161,6 +161,7 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                     <tr>
                         <th>Fecha</th>
                         <th>Docente</th>
+                        <th class="text-center">Turno</th> <!-- NUEVO -->
                         <th>Entrada</th>
                         <th>Salida</th>
                         <th>Tardanza</th>
@@ -173,9 +174,7 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                         <tr>
                             <td>
                                 <div class="fw-semibold"><?= date('d/m/Y', strtotime($a['fecha'])) ?></div>
-                                <small class="text-muted">
-                                    <?= DateHelper::diaSemana($a['fecha']) ?>
-                                </small>
+                                <small class="text-muted"><?= DateHelper::diaSemana($a['fecha']) ?></small>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -183,44 +182,40 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                                         <?= strtoupper(substr($a['nombres'], 0, 1) . substr($a['apellidos'], 0, 1)) ?>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold">
-                                            <?= htmlspecialchars($a['nombres'] . ' ' . $a['apellidos']) ?>
-                                        </div>
-                                        <div class="text-muted small">
-                                            <code><?= htmlspecialchars($a['dni']) ?></code>
-                                        </div>
+                                        <div class="fw-semibold"><?= htmlspecialchars($a['nombres'] . ' ' . $a['apellidos']) ?></div>
+                                        <div class="text-muted small"><code><?= htmlspecialchars($a['dni']) ?></code></div>
                                     </div>
                                 </div>
                             </td>
+                            <!-- NUEVA CELDA: TURNO -->
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border">
+                                    <?= htmlspecialchars($a['turno_nombre'] ?? '—') ?>
+                                </span>
+                            </td>
                             <td>
                                 <?php if ($a['hora_entrada']): ?>
-                                    <i class="bi bi-box-arrow-in-right text-success"></i>
-                                    <?= date('H:i', strtotime($a['hora_entrada'])) ?>
+                                    <i class="bi bi-box-arrow-in-right text-success"></i> <?= date('H:i', strtotime($a['hora_entrada'])) ?>
                                 <?php else: ?>
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if ($a['hora_salida']): ?>
-                                    <i class="bi bi-box-arrow-right text-primary"></i>
-                                    <?= date('H:i', strtotime($a['hora_salida'])) ?>
+                                    <i class="bi bi-box-arrow-right text-primary"></i> <?= date('H:i', strtotime($a['hora_salida'])) ?>
                                 <?php else: ?>
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if ($a['minutos_tardanza'] > 0): ?>
-                                    <span class="text-warning fw-semibold">
-                                        <i class="bi bi-clock"></i> <?= $a['minutos_tardanza'] ?> min
-                                    </span>
+                                    <span class="text-warning fw-semibold"><i class="bi bi-clock"></i> <?= $a['minutos_tardanza'] ?> min</span>
                                 <?php else: ?>
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border">
-                                    <i class="bi bi-qr-code"></i> <?= strtoupper($a['metodo_marcacion']) ?>
-                                </span>
+                                <span class="badge bg-light text-dark border"><i class="bi bi-qr-code"></i> <?= strtoupper($a['metodo_marcacion']) ?></span>
                             </td>
                             <td class="text-center">
                                 <?php
@@ -254,16 +249,13 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                 <ul class="pagination pagination-sm mb-0">
                     <?php
                     $qs = http_build_query([
-                        'desde' => $desde,
-                        'hasta' => $hasta,
-                        'docente_id' => $docenteId,
-                        'estado' => $estado
+                        'desde' => $desde, 'hasta' => $hasta,
+                        'docente_id' => $docenteId, 'estado' => $estado,
+                        'turno_id' => $turnoId ?? 0 // NUEVO
                     ]);
                     ?>
                     <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
-                        <a class="page-link" href="?pagina=<?= $pagina - 1 ?>&<?= $qs ?>">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
+                        <a class="page-link" href="?pagina=<?= $pagina - 1 ?>&<?= $qs ?>"><i class="bi bi-chevron-left"></i></a>
                     </li>
                     <?php for ($p = max(1, $pagina - 2); $p <= min($paginas, $pagina + 2); $p++): ?>
                         <li class="page-item <?= $p === $pagina ? 'active' : '' ?>">
@@ -271,9 +263,7 @@ $hayFiltrosActivos = ($desde !== date('Y-m-01'))
                         </li>
                     <?php endfor; ?>
                     <li class="page-item <?= $pagina >= $paginas ? 'disabled' : '' ?>">
-                        <a class="page-link" href="?pagina=<?= $pagina + 1 ?>&<?= $qs ?>">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
+                        <a class="page-link" href="?pagina=<?= $pagina + 1 ?>&<?= $qs ?>"><i class="bi bi-chevron-right"></i></a>
                     </li>
                 </ul>
             </nav>

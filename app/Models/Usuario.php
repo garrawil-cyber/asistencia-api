@@ -17,28 +17,6 @@ class Usuario
     }
 
     /**
-     * Busca un usuario activo por username, incluyendo su rol
-     * y (si aplica) su ID de docente.
-     */
-    public static function buscarPorUsername(string $username): ?array
-    {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
-            SELECT u.id, u.username, u.password_hash, u.activo,
-                   u.ultimo_login, u.created_at,
-                   r.nombre AS rol,
-                   d.id     AS docente_id
-            FROM usuarios u
-            JOIN roles r ON r.id = u.rol_id
-            LEFT JOIN docentes d ON d.usuario_id = u.id
-            WHERE u.username = ? AND u.activo = 1
-            LIMIT 1
-        ");
-        $stmt->execute([$username]);
-        return $stmt->fetch() ?: null;
-    }
-
-    /**
      * Actualiza la fecha de último login.
      */
     public static function actualizarUltimoLogin(int $id): void
@@ -230,6 +208,38 @@ class Usuario
             LIMIT 1
         ");
         $stmt->execute([$id]);
+        return $stmt->fetch() ?: null;
+    }
+
+        // En Usuario.php
+    
+    public static function existeUsername(string $username, int $excluirId = 0): bool
+    {
+        $db = Database::getConnection();
+        $sql = "SELECT COUNT(*) FROM usuarios WHERE username = ?";
+        $params = [$username];
+        if ($excluirId > 0) { $sql .= " AND id != ?"; $params[] = $excluirId; }
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn() > 0;
+    }
+
+    // Y en buscarPorUsername(), agrega el campo nombre_completo:
+    public static function buscarPorUsername(string $username): ?array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("
+            SELECT u.id, u.username, u.nombre_completo, u.password_hash, u.activo,
+                   u.ultimo_login, u.created_at,
+                   r.nombre AS rol,
+                   d.id     AS docente_id
+            FROM usuarios u
+            JOIN roles r ON r.id = u.rol_id
+            LEFT JOIN docentes d ON d.usuario_id = u.id
+            WHERE u.username = ? AND u.activo = 1
+            LIMIT 1
+        ");
+        $stmt->execute([$username]);
         return $stmt->fetch() ?: null;
     }
 

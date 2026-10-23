@@ -110,7 +110,7 @@ G
 ### Panel Admin
 | Usuario | Password | Rol |
 |---------|----------|-----|
-| `admin` | `admin123` | Administrador total |
+| `admin` | `admin456` | Administrador total |
 | `coordinador` | `coord123` | Aprueba justificaciones |
 
 ### API para docentes (app Android)

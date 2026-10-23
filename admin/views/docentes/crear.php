@@ -94,6 +94,22 @@ function old($old, $campo, $default = '') {
                                maxlength="100" placeholder="Matemática"
                                value="<?= old($old, 'especialidad') ?>">
                     </div>
+
+                    <!-- SELECTOR DE TURNO -->
+                    <div class="col-md-3">
+                        <label class="form-label">Turno <span class="text-danger">*</span></label>
+                        <select name="turno_id" class="form-select <?= err($errores,'turno_id') ? 'is-invalid' : '' ?>" required>
+                            <option value="">Seleccione un turno...</option>
+                            <?php foreach ($turnos as $t): ?>
+                                <option value="<?= $t['id'] ?>" 
+                                    <?= ($old['turno_id'] ?? '') == $t['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($t['nombre']) ?> 
+                                    (<?= substr($t['hora_entrada'], 0, 5) ?> - <?= substr($t['hora_salida'], 0, 5) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="invalid-feedback"><?= err($errores,'turno_id') ?></div>
+                    </div>
                 </div>
 
                 <h6 class="form-section-title">
@@ -102,7 +118,7 @@ function old($old, $campo, $default = '') {
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label">Usuario <span class="text-danger">*</span></label>
-                        <div class="input-group">
+                        <div class="input-group has-validation">
                             <span class="input-group-text">@</span>
                             <input type="text" name="username" id="username"
                                    class="form-control <?= err($errores,'username') ? 'is-invalid' : '' ?>"
@@ -115,7 +131,7 @@ function old($old, $campo, $default = '') {
 
                     <div class="col-md-6">
                         <label class="form-label">Contraseña <span class="text-danger">*</span></label>
-                        <div class="input-group">
+                        <div class="input-group has-validation">
                             <input type="password" name="password" id="password"
                                    class="form-control <?= err($errores,'password') ? 'is-invalid' : '' ?>"
                                    minlength="6" placeholder="Mínimo 6 caracteres" required>
